@@ -721,7 +721,7 @@
         {
           "name": "FORKS WOOD 16CM BIRCH",
           "qty": 1,
-          "costPerUnit": 0.03,
+          "costPerUnit": 0.12,
           "unit": "each"
         },
         {
@@ -735,7 +735,7 @@
       "wastage": 0,
       "gst": 0.15,
       "retail": 21,
-      "allergens": "Contains Fish, Egg, Dairy",
+      "allergens": "Dairy, Fish, Gluten",
       "imageUrl": "",
       "notes": ""
     },
@@ -778,7 +778,7 @@
       "wastage": 0,
       "gst": 0.15,
       "retail": 16.5,
-      "allergens": "Contains Fish, Egg, Dairy",
+      "allergens": "Dairy, Fish, Gluten",
       "imageUrl": "",
       "notes": ""
     },
@@ -863,7 +863,7 @@
       "wastage": 0,
       "gst": 0.15,
       "retail": 16.5,
-      "allergens": "Contains Fish, Egg, Dairy",
+      "allergens": "Fish, Gluten",
       "imageUrl": "",
       "notes": ""
     },
@@ -918,7 +918,7 @@
       "wastage": 0,
       "gst": 0.15,
       "retail": 13,
-      "allergens": "Contains Crustacean, Egg",
+      "allergens": "Crustacean, Egg",
       "imageUrl": "",
       "notes": ""
     },
@@ -1315,7 +1315,7 @@
       "wastage": 0,
       "gst": 0.15,
       "retail": 18,
-      "allergens": "Contains Fish, Egg, Dairy",
+      "allergens": "Dairy, Fish, Gluten",
       "imageUrl": "",
       "notes": ""
     },
@@ -1370,7 +1370,7 @@
       "wastage": 0,
       "gst": 0.15,
       "retail": 55,
-      "allergens": "Contains Fish, Egg, Dairy",
+      "allergens": "Crustacean, Dairy",
       "imageUrl": "",
       "notes": ""
     },
