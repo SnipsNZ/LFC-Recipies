@@ -3,7 +3,7 @@
     {
       "name": "Whitebait",
       "unit": "kg",
-      "cost": 75,
+      "cost": 750,
       "allergen": "Fish",
       "dietary": "",
       "type": "Ingredient"
@@ -545,7 +545,7 @@
         {
           "name": "Whitebait",
           "qty": 0.03,
-          "costPerUnit": 75,
+          "costPerUnit": 10,
           "unit": "kg"
         },
         {
@@ -596,7 +596,7 @@
       "gst": 0.15,
       "retail": 18,
       "allergens": "Dairy, Fish, Gluten",
-      "imageUrl": "",
+      "imageUrl": "https://images.squarespace-cdn.com/content/624fa63d5ba99559345806e6/9f00cfb7-9161-4818-9794-d6a2df76df9c/EG15_EP12_Whitebait+Fritter+Sandwich_1L0A1501.jpg?format=1500w&content-type=image%2Fjpeg",
       "notes": ""
     },
     {
