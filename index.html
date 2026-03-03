@@ -2,421 +2,507 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Little Fish Co — Recipe Costing</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-:root {
-  --navy:#1a2744;
-  --ocean:#2563a8;
-  --seafoam:#4da8a0;
-  --sand:#f5f0e6;
-  --cream:#fdf9f3;
-  --ink:#1c1c1c;
-  --mid:#5a6272;
-  --faint:#e2ddd4;
+:root{
+  --navy:#0d1f3c;
+  --ocean:#1a5fa8;
+  --teal:#1a8a7e;
+  --sand:#f4ede0;
+  --cream:#fdf9f4;
+  --ink:#161616;
+  --mid:#5c6575;
+  --light:#8a93a2;
+  --faint:#e4ddd2;
   --white:#ffffff;
-  --green:#2d7a4f;
-  --amber:#c07a1a;
-  --red:#b03030;
+  --green:#1e6e44;
+  --amber:#b87010;
+  --red:#b02828;
+  --rule:1px solid var(--faint);
 }
 
-body{font-family:'Source Sans 3',sans-serif;background:var(--sand);color:var(--ink);min-height:100vh}
+body{font-family:'Barlow',sans-serif;background:var(--sand);color:var(--ink);min-height:100vh;font-size:14px}
 
-/* ── APP SHELL ── */
-.app{display:grid;grid-template-columns:280px 1fr;min-height:100vh}
+/* ══ LAYOUT ══════════════════════════════════════════════════════════════════ */
+.app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
 
-/* ── SIDEBAR ── */
-.sidebar{background:var(--navy);color:var(--white);display:flex;flex-direction:column;overflow:hidden}
-.sidebar-logo{padding:1.5rem 1.25rem 1rem;border-bottom:1px solid rgba(255,255,255,.1)}
-.sidebar-logo img{max-width:120px;display:block;margin:0 auto;filter:brightness(0) invert(1)}
-.sidebar-logo h2{text-align:center;font-family:'Playfair Display',serif;font-size:1rem;margin-top:.5rem;color:rgba(255,255,255,.7);font-weight:400;letter-spacing:.05em}
+/* ══ SIDEBAR ════════════════════════════════════════════════════════════════ */
+.sidebar{background:var(--navy);color:#fff;display:flex;flex-direction:column;overflow:hidden;position:sticky;top:0;height:100vh}
+.sb-brand{padding:1.25rem 1rem .75rem;border-bottom:1px solid rgba(255,255,255,.1);text-align:center}
+.sb-brand img{max-width:110px;display:block;margin:0 auto;
+  /* Force white rendering - use brightness filter */
+  filter:brightness(0) invert(1);
+  image-rendering:crisp-edges}
+.sb-brand span{display:block;font-family:'Barlow Condensed',sans-serif;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-top:.4rem}
+.sb-new{margin:.75rem;display:block;width:calc(100% - 1.5rem);background:var(--teal);color:#fff;border:none;padding:.6rem;border-radius:5px;font-family:'Barlow',sans-serif;font-weight:600;font-size:.82rem;letter-spacing:.04em;cursor:pointer;transition:background .2s;text-align:center}
+.sb-new:hover{background:#148075}
+.sb-label{padding:.5rem 1rem .2rem;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.35)}
+.sb-list{flex:1;overflow-y:auto;padding-bottom:1rem}
+.sb-list::-webkit-scrollbar{width:3px}
+.sb-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:2px}
+.sb-item{padding:.55rem 1rem;cursor:pointer;border-left:3px solid transparent;transition:all .15s}
+.sb-item:hover{background:rgba(255,255,255,.06)}
+.sb-item.active{background:rgba(255,255,255,.1);border-left-color:var(--teal)}
+.sb-item-name{font-size:.84rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.sb-item-meta{font-size:.7rem;color:rgba(255,255,255,.35);margin-top:1px}
+.sb-footer{padding:.75rem;border-top:1px solid rgba(255,255,255,.1)}
+.sb-mgmt{width:100%;background:rgba(255,255,255,.07);color:rgba(255,255,255,.6);border:none;padding:.5rem;border-radius:4px;font-family:'Barlow',sans-serif;font-size:.78rem;cursor:pointer;transition:background .15s;letter-spacing:.02em}
+.sb-mgmt:hover{background:rgba(255,255,255,.12);color:#fff}
 
-.sidebar-actions{padding:.75rem 1rem}
-.btn-new{width:100%;background:var(--seafoam);color:white;border:none;padding:.65rem 1rem;border-radius:6px;font-family:'Source Sans 3',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:background .2s;letter-spacing:.02em}
-.btn-new:hover{background:#3d9891}
+/* ══ MAIN ════════════════════════════════════════════════════════════════════ */
+.main{display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:var(--white);border-bottom:var(--rule);padding:.65rem 1.25rem;display:flex;align-items:center;gap:.75rem;position:sticky;top:0;z-index:10}
+.topbar-title{font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:700;letter-spacing:.03em;flex:1;text-transform:uppercase}
+.btn{padding:.45rem 1rem;border-radius:4px;font-family:'Barlow',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;border:none;transition:all .15s;letter-spacing:.03em}
+.btn-ocean{background:var(--ocean);color:#fff}.btn-ocean:hover{background:#1450900}
+.btn-ghost{background:transparent;color:var(--mid);border:1.5px solid var(--faint)}.btn-ghost:hover{border-color:var(--ocean);color:var(--ocean)}
+.btn-danger{background:transparent;color:var(--red);border:1.5px solid var(--faint)}.btn-danger:hover{border-color:var(--red)}
+.btn-print{background:var(--navy);color:#fff}.btn-print:hover{background:#06132a}
 
-.sidebar-section-label{padding:.75rem 1rem .25rem;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4)}
+.content{flex:1;overflow-y:auto;padding:1.25rem}
 
-.recipe-list{flex:1;overflow-y:auto;padding:.25rem 0 1rem}
-.recipe-list::-webkit-scrollbar{width:4px}
-.recipe-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.2);border-radius:2px}
+/* ══ WELCOME ════════════════════════════════════════════════════════════════ */
+.welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;gap:1rem;padding:2rem}
+.welcome img{max-width:140px;opacity:.5}
+.welcome h2{font-family:'Barlow Condensed',sans-serif;font-size:1.8rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--navy)}
+.welcome p{color:var(--mid);max-width:340px;line-height:1.6;font-size:.9rem}
 
-.recipe-item{padding:.6rem 1.25rem;cursor:pointer;transition:background .15s;border-left:3px solid transparent;font-size:.88rem}
-.recipe-item:hover{background:rgba(255,255,255,.07)}
-.recipe-item.active{background:rgba(255,255,255,.1);border-left-color:var(--seafoam);color:white;font-weight:600}
-.recipe-item-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.recipe-item-cost{font-size:.75rem;color:rgba(255,255,255,.4);margin-top:1px}
+/* ══ RECIPE EDITOR ══════════════════════════════════════════════════════════ */
+.recipe-grid{display:grid;grid-template-columns:1fr 300px;gap:1.25rem;align-items:start}
 
-/* ── MAIN ── */
-.main{display:flex;flex-direction:column;overflow:hidden}
+.card{background:var(--white);border-radius:8px;border:var(--rule);overflow:hidden;margin-bottom:1rem}
+.card:last-child{margin-bottom:0}
+.ch{padding:.75rem 1rem;border-bottom:var(--rule);display:flex;justify-content:space-between;align-items:center;background:var(--cream)}
+.ch h3{font-family:'Barlow Condensed',sans-serif;font-size:.85rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--navy)}
+.ch span{font-size:.78rem;color:var(--mid)}
+.cb{padding:1rem}
 
-.topbar{background:var(--white);border-bottom:1px solid var(--faint);padding:.75rem 1.5rem;display:flex;align-items:center;gap:1rem}
-.topbar h1{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;flex:1}
-.btn{padding:.5rem 1.1rem;border-radius:6px;font-family:'Source Sans 3',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;border:none;transition:all .2s}
-.btn-primary{background:var(--ocean);color:white}
-.btn-primary:hover{background:#1b4f8a}
-.btn-secondary{background:transparent;color:var(--mid);border:1.5px solid var(--faint)}
-.btn-secondary:hover{border-color:var(--ocean);color:var(--ocean)}
-.btn-danger{background:transparent;color:var(--red);border:1.5px solid var(--faint)}
-.btn-danger:hover{border-color:var(--red)}
-.btn-print{background:var(--navy);color:white}
-.btn-print:hover{background:#0f1a32}
-
-.content{flex:1;overflow-y:auto;padding:1.5rem}
-
-/* ── RECIPE VIEW ── */
-.recipe-grid{display:grid;grid-template-columns:1fr 320px;gap:1.5rem;align-items:start}
-
-.card{background:var(--white);border-radius:10px;border:1px solid var(--faint);overflow:hidden}
-.card-header{padding:1rem 1.25rem;border-bottom:1px solid var(--faint);display:flex;justify-content:space-between;align-items:center}
-.card-header h3{font-family:'Playfair Display',serif;font-size:1rem;font-weight:600}
-.card-body{padding:1.25rem}
-
-/* Recipe image */
-.recipe-image-wrap{background:var(--sand);height:180px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
-.recipe-image-wrap img{width:100%;height:100%;object-fit:cover}
-.recipe-image-placeholder{text-align:center;color:var(--mid)}
-.recipe-image-placeholder svg{opacity:.3}
-.recipe-image-placeholder p{font-size:.8rem;margin-top:.5rem;opacity:.6}
-
-.img-url-row{display:flex;gap:.5rem;padding:.75rem 1.25rem;border-top:1px solid var(--faint);background:var(--cream)}
-.img-url-row input{flex:1;border:1.5px solid var(--faint);border-radius:5px;padding:.4rem .6rem;font-size:.82rem;font-family:'Source Sans 3',sans-serif;outline:none;color:var(--ink)}
+/* Image */
+.img-frame{width:100%;aspect-ratio:16/7;background:#e8e2d8;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center}
+.img-frame img{width:100%;height:100%;object-fit:cover;display:block}
+.img-placeholder{text-align:center;color:var(--light);pointer-events:none}
+.img-placeholder svg{opacity:.4;display:block;margin:0 auto .5rem}
+.img-placeholder p{font-size:.75rem}
+.img-url-row{display:flex;gap:.5rem;padding:.65rem 1rem;background:var(--cream);border-top:var(--rule)}
+.img-url-row input{flex:1;border:1.5px solid var(--faint);border-radius:4px;padding:.35rem .6rem;font-size:.8rem;font-family:'Barlow',sans-serif;outline:none;color:var(--ink);background:var(--white)}
 .img-url-row input:focus{border-color:var(--ocean)}
-.img-url-row .btn{padding:.4rem .75rem;font-size:.8rem}
+.img-url-row .btn{padding:.35rem .75rem;font-size:.76rem}
+
+/* Recipe name field */
+.recipe-name-row{padding:.65rem 1rem;border-bottom:var(--rule);background:var(--cream);display:flex;align-items:center;gap:.75rem}
+.recipe-name-row label{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--light);white-space:nowrap}
+.recipe-name-row input{flex:1;border:none;background:transparent;font-family:'Barlow Condensed',sans-serif;font-size:1.15rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--navy);outline:none}
 
 /* Ingredients table */
-table{width:100%;border-collapse:collapse;font-size:.85rem}
-th{text-align:left;padding:.5rem .6rem;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mid);border-bottom:2px solid var(--faint);font-weight:600}
-td{padding:.5rem .6rem;border-bottom:1px solid var(--faint)}
-tr:last-child td{border-bottom:none}
-td input,td select{width:100%;border:1.5px solid transparent;border-radius:4px;padding:.25rem .4rem;font-family:'Source Sans 3',sans-serif;font-size:.85rem;background:transparent;color:var(--ink);outline:none}
-td input:focus,td select:focus{border-color:var(--ocean);background:var(--cream)}
-.ing-cost{color:var(--mid);font-size:.82rem}
-.btn-rm{background:none;border:none;color:var(--faint);cursor:pointer;font-size:1.1rem;line-height:1;padding:0 4px;transition:color .15s}
+.ing-table{width:100%;border-collapse:collapse;font-size:.82rem}
+.ing-table th{text-align:left;padding:.4rem .5rem;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--light);border-bottom:2px solid var(--faint);font-weight:600;background:var(--cream)}
+.ing-table td{padding:.38rem .5rem;border-bottom:1px solid var(--faint)}
+.ing-table tr:last-child td{border-bottom:none}
+.ing-table tr:hover td{background:#faf8f5}
+.ing-table td input,.ing-table td select{width:100%;border:1.5px solid transparent;border-radius:3px;padding:.2rem .35rem;font-family:'Barlow',sans-serif;font-size:.82rem;background:transparent;color:var(--ink);outline:none}
+.ing-table td input:focus,.ing-table td select:focus{border-color:var(--ocean);background:var(--cream)}
+.td-cost{color:var(--mid);font-size:.78rem;white-space:nowrap}
+.btn-rm{background:none;border:none;color:var(--faint);cursor:pointer;font-size:1rem;padding:0 3px;line-height:1;transition:color .15s}
 .btn-rm:hover{color:var(--red)}
 
-.add-ing-row{display:flex;gap:.5rem;padding:.75rem 1.25rem;border-top:1px solid var(--faint);background:var(--cream)}
-.add-ing-row select,.add-ing-row input{flex:1;border:1.5px solid var(--faint);border-radius:5px;padding:.4rem .6rem;font-size:.82rem;font-family:'Source Sans 3',sans-serif;outline:none;color:var(--ink)}
-.add-ing-row select:focus,.add-ing-row input:focus{border-color:var(--ocean)}
+.add-row{display:flex;gap:.5rem;padding:.65rem 1rem;background:var(--cream);border-top:var(--rule)}
+.add-row select,.add-row input{border:1.5px solid var(--faint);border-radius:4px;padding:.35rem .55rem;font-size:.8rem;font-family:'Barlow',sans-serif;outline:none;color:var(--ink);background:var(--white)}
+.add-row select{flex:2}.add-row input{flex:1}
+.add-row select:focus,.add-row input:focus{border-color:var(--ocean)}
 
-/* Summary card */
-.summary-grid{display:grid;gap:.75rem}
-.summary-row{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid var(--faint)}
-.summary-row:last-child{border-bottom:none}
-.summary-label{font-size:.82rem;color:var(--mid)}
-.summary-value{font-size:.9rem;font-weight:600}
-.summary-value.highlight{color:var(--ocean);font-size:1rem}
-.summary-value.good{color:var(--green)}
-.summary-value.warn{color:var(--amber)}
-.summary-value.bad{color:var(--red)}
+/* Allergen badges */
+.allergen-list{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.5rem}
+.ab{display:inline-block;background:#fff3cd;color:#7a5100;border:1px solid #e8c840;border-radius:3px;padding:.15rem .45rem;font-size:.72rem;font-weight:600;letter-spacing:.03em;text-transform:uppercase}
+.ab.fish{background:#ddeeff;color:#1a4a8a;border-color:#a0c4f0}
+.ab.dairy{background:#fff0e0;color:#8a4010;border-color:#f0c090}
+.ab.egg{background:#fffde0;color:#8a7010;border-color:#e8d840}
+.ab.gluten{background:#f0ffe0;color:#2a6a10;border-color:#90d060}
+.ab.crustacean{background:#ffe0e0;color:#8a1010;border-color:#f09090}
+.ab.mollusc{background:#e8e0ff;color:#3a1a8a;border-color:#a090f0}
+.ab.soy{background:#e8f5e8;color:#1a5a1a;border-color:#80c080}
+.ab.sesame{background:#f5ece0;color:#6a3a10;border-color:#d0a060}
 
-.summary-input{text-align:right;width:80px;border:1.5px solid var(--faint);border-radius:4px;padding:.25rem .4rem;font-family:'Source Sans 3',sans-serif;font-size:.88rem;font-weight:600;outline:none;color:var(--ink)}
-.summary-input:focus{border-color:var(--ocean)}
+/* Summary */
+.sum-row{display:flex;justify-content:space-between;align-items:center;padding:.42rem 0;border-bottom:1px solid var(--faint)}
+.sum-row:last-child{border-bottom:none}
+.sum-lbl{font-size:.8rem;color:var(--mid)}
+.sum-val{font-size:.85rem;font-weight:600}
+.sum-val.hl{color:var(--ocean);font-size:.95rem}
+.sum-val.good{color:var(--green)}.sum-val.warn{color:var(--amber)}.sum-val.bad{color:var(--red)}
+.sum-input{text-align:right;width:75px;border:1.5px solid var(--faint);border-radius:3px;padding:.2rem .35rem;font-family:'Barlow',sans-serif;font-size:.85rem;font-weight:600;outline:none;color:var(--ink)}
+.sum-input:focus{border-color:var(--ocean)}
+.sum-divider{border:none;border-top:2px solid var(--navy);margin:.3rem 0}
 
-.allergen-badge{display:inline-block;background:#fff3cd;color:#7a5100;border:1px solid #f0d060;border-radius:4px;padding:.2rem .5rem;font-size:.75rem;margin:.15rem}
+/* Notes */
+.notes-ta{width:100%;border:1.5px solid var(--faint);border-radius:4px;padding:.6rem;font-family:'Barlow',sans-serif;font-size:.82rem;color:var(--ink);resize:vertical;min-height:70px;outline:none;background:var(--white)}
+.notes-ta:focus{border-color:var(--ocean)}
 
-.meta-row{display:flex;gap:.5rem;align-items:center;margin-bottom:.75rem}
-.meta-row label{font-size:.8rem;color:var(--mid);min-width:80px}
-.meta-row input,
-.meta-row textarea{flex:1;border:1.5px solid var(--faint);border-radius:5px;padding:.35rem .5rem;font-family:'Source Sans 3',sans-serif;font-size:.85rem;outline:none;color:var(--ink)}
-.meta-row input:focus,.meta-row textarea:focus{border-color:var(--ocean)}
-.meta-row textarea{resize:vertical;min-height:60px}
+/* ══ INGREDIENTS MANAGEMENT ══════════════════════════════════════════════════ */
+.mgmt-table{width:100%;border-collapse:collapse;font-size:.8rem}
+.mgmt-table th{text-align:left;padding:.4rem .5rem;font-size:.63rem;letter-spacing:.1em;text-transform:uppercase;color:var(--light);border-bottom:2px solid var(--faint);background:var(--cream);font-weight:600}
+.mgmt-table td{padding:.35rem .5rem;border-bottom:1px solid var(--faint)}
+.mgmt-table td input{width:100%;border:1.5px solid transparent;border-radius:3px;padding:.2rem .35rem;font-family:'Barlow',sans-serif;font-size:.8rem;background:transparent;outline:none}
+.mgmt-table td input:focus{border-color:var(--ocean);background:var(--cream)}
 
-/* Welcome screen */
-.welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:3rem;gap:1rem}
-.welcome img{max-width:160px;opacity:.6}
-.welcome h2{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--navy)}
-.welcome p{color:var(--mid);max-width:360px;line-height:1.6}
-
-/* Ingredients management view */
-.ing-mgmt table{font-size:.83rem}
-.ing-mgmt th{font-size:.68rem}
-.ing-mgmt td input{font-size:.82rem}
-
-/* ── PRINT STYLES ── */
+/* ══ PRINT ════════════════════════════════════════════════════════════════════
+   Target: clean single A4 page, portrait
+   ──────────────────────────────────────────────────────────────────────────── */
 @media print {
-  body{background:white}
-  .sidebar,.topbar,.btn,.add-ing-row,.img-url-row,.btn-rm,.meta-row,.print-hide{display:none!important}
-  .app{display:block}
-  .main{display:block}
-  .content{padding:.5in}
-  .recipe-grid{grid-template-columns:1fr 260px;gap:1rem}
-  .card{border:1px solid #ccc;break-inside:avoid}
-  .print-header{display:flex!important;align-items:center;gap:1rem;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:2px solid #1a2744}
-  .print-header img{max-width:100px}
-  .print-header h1{font-family:'Playfair Display',serif;font-size:1.4rem;color:#1a2744}
-  .recipe-image-wrap{height:200px!important}
-  table td input,table td select{border:none!important;background:transparent!important;padding:0}
-  .summary-input{border:none!important;background:transparent!important}
+  @page { size: A4 portrait; margin: 12mm 14mm; }
+
+  /* Hide everything except print sheet */
+  .sidebar, .topbar, .content > *:not(.print-sheet) { display: none !important; }
+  body { background: white; font-size: 11px; }
+  .app { display: block; }
+  .main { display: block; }
+  .content { padding: 0; overflow: visible; }
+  .print-sheet { display: block !important; }
 }
 
-.print-header{display:none}
-
-/* Responsive */
-@media(max-width:768px){
-  .app{grid-template-columns:1fr}
-  .sidebar{display:none}
-  .recipe-grid{grid-template-columns:1fr}
+/* ── Print sheet (hidden on screen, shown on print) ── */
+.print-sheet {
+  display: none;
+  font-family: 'Barlow', sans-serif;
+  color: #161616;
+  background: white;
 }
+
+/* Header bar */
+.ps-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 6pt;
+  border-bottom: 2.5pt solid #0d1f3c;
+  margin-bottom: 8pt;
+}
+.ps-logo { width: 70pt; flex-shrink: 0; }
+.ps-logo img { width: 100%; display: block; }
+.ps-title-block { flex: 1 }
+.ps-company { font-family: 'Barlow Condensed', sans-serif; font-size: 7pt; letter-spacing: .15em; text-transform: uppercase; color: #5c6575; }
+.ps-recipe-name { font-family: 'Barlow Condensed', sans-serif; font-size: 22pt; font-weight: 800; text-transform: uppercase; line-height: 1; color: #0d1f3c; }
+.ps-meta-pills { display: flex; gap: 6pt; flex-wrap: wrap; margin-top: 3pt; }
+.ps-pill { font-size: 7pt; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; padding: 1pt 5pt; border-radius: 2pt; background: #f4ede0; color: #5c6575; border: .5pt solid #e4ddd2; }
+.ps-pill.retail { background: #0d1f3c; color: white; }
+.ps-pill.fcp.good { background: #d4f0e0; color: #1e6e44; border-color: #80c0a0; }
+.ps-pill.fcp.warn { background: #fff0d0; color: #b87010; border-color: #e0c060; }
+.ps-pill.fcp.bad  { background: #ffe0e0; color: #b02828; border-color: #e09090; }
+
+/* Image - takes ~top third of content area */
+.ps-image {
+  width: 100%;
+  height: 72mm;
+  overflow: hidden;
+  border-radius: 3pt;
+  margin-bottom: 8pt;
+  position: relative;
+  background: #e8e2d8;
+  display: flex; align-items: center; justify-content: center;
+}
+.ps-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ps-image-none { font-size: 8pt; color: #8a93a2; font-style: italic; }
+
+/* Two-column body */
+.ps-body { display: flex; gap: 10pt; }
+.ps-left { flex: 1; min-width: 0; }
+.ps-right { width: 110pt; flex-shrink: 0; }
+
+/* Section headings */
+.ps-section-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 7pt;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: #5c6575;
+  border-bottom: 1.5pt solid #0d1f3c;
+  padding-bottom: 2pt;
+  margin-bottom: 4pt;
+}
+
+/* Ingredients table */
+.ps-ing-table { width: 100%; border-collapse: collapse; font-size: 8.5pt; }
+.ps-ing-table th { text-align: left; padding: 2pt 3pt; font-size: 6.5pt; letter-spacing: .08em; text-transform: uppercase; color: #8a93a2; border-bottom: 1pt solid #e4ddd2; font-weight: 600; }
+.ps-ing-table th:last-child, .ps-ing-table td:last-child { text-align: right; }
+.ps-ing-table td { padding: 2.5pt 3pt; border-bottom: .5pt solid #f0ebe4; font-size: 8pt; }
+.ps-ing-table tr:last-child td { border-bottom: none; }
+.ps-ing-table .td-qty { color: #5c6575; white-space: nowrap; }
+.ps-ing-table .td-cost { color: #5c6575; }
+
+/* Cost summary */
+.ps-sum { width: 100%; }
+.ps-sum-row { display: flex; justify-content: space-between; padding: 2pt 0; border-bottom: .5pt solid #f0ebe4; font-size: 8pt; }
+.ps-sum-row:last-child { border-bottom: none; }
+.ps-sum-row .l { color: #5c6575; }
+.ps-sum-row .v { font-weight: 600; }
+.ps-sum-row.total-row { border-top: 1.5pt solid #0d1f3c; border-bottom: 1.5pt solid #0d1f3c; margin: 2pt 0; padding: 3pt 0; }
+.ps-sum-row.total-row .l { font-weight: 700; color: #0d1f3c; font-size: 8.5pt; }
+.ps-sum-row.total-row .v { font-size: 10pt; color: #0d1f3c; }
+.ps-sum-row.retail-row .v { color: #1a5fa8; font-size: 9pt; }
+
+/* Allergens */
+.ps-allergen-list { display: flex; flex-wrap: wrap; gap: 3pt; margin-top: 4pt; }
+.ps-ab { font-size: 6.5pt; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 1.5pt 4pt; border-radius: 2pt; background: #fff3cd; color: #7a5100; border: .5pt solid #e8c840; }
+
+/* Notes */
+.ps-notes { font-size: 8pt; color: #5c6575; line-height: 1.5; margin-top: 4pt; }
+
+/* Footer */
+.ps-footer { margin-top: 8pt; padding-top: 5pt; border-top: 1pt solid #e4ddd2; display: flex; justify-content: space-between; align-items: center; }
+.ps-footer-brand { font-family: 'Barlow Condensed', sans-serif; font-size: 7pt; letter-spacing: .12em; text-transform: uppercase; color: #8a93a2; }
+.ps-footer-date { font-size: 7pt; color: #8a93a2; }
 </style>
 </head>
 <body>
 <div class="app">
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sidebar-logo">
-      <img src="data:image/png;base64,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" alt="Little Fish Co"/>
-      <h2>Recipe Costing</h2>
-    </div>
-    <div class="sidebar-actions">
-      <button class="btn-new" onclick="newRecipe()">+ New Recipe</button>
-    </div>
-    <div class="sidebar-section-label">Recipes</div>
-    <div class="recipe-list" id="recipe-list"></div>
-    <div style="padding:.75rem 1rem;border-top:1px solid rgba(255,255,255,.1)">
-      <div class="sidebar-section-label" style="padding:0 0 .5rem">Manage</div>
-      <button class="btn-new" style="background:rgba(255,255,255,.1);font-weight:500" onclick="showIngredients()">⚙ Ingredients List</button>
-    </div>
-  </aside>
 
-  <!-- MAIN -->
-  <main class="main">
-    <div class="topbar" id="topbar">
-      <h1 id="topbar-title">Little Fish Co</h1>
-      <div id="topbar-actions"></div>
+<!-- ══ SIDEBAR ══════════════════════════════════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sb-brand">
+    <img id="sb-logo" src="data:image/png;base64,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" alt="Little Fish Co"/>
+    <span>Recipe Costing</span>
+  </div>
+  <button class="sb-new" onclick="newRecipe()">+ New Recipe</button>
+  <div class="sb-label">Recipes</div>
+  <div class="sb-list" id="sb-list"></div>
+  <div class="sb-footer">
+    <button class="sb-mgmt" onclick="showIngredients()">⚙ Manage Ingredients</button>
+  </div>
+</aside>
+
+<!-- ══ MAIN ═════════════════════════════════════════════════════════════════ -->
+<main class="main">
+  <div class="topbar" id="topbar">
+    <div class="topbar-title" id="topbar-title">Little Fish Co</div>
+    <div id="topbar-actions"></div>
+  </div>
+  <div class="content" id="content">
+    <div class="welcome">
+      <img src="data:image/png;base64,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" alt="Little Fish Co" style="filter:opacity(.4)"/>
+      <h2>Recipe Costing</h2>
+      <p>Select a recipe from the sidebar to view and edit, or create a new one.</p>
     </div>
-    <div class="content" id="content">
-      <div class="welcome">
-        <img src="data:image/png;base64,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" alt="Logo"/>
-        <h2>Recipe Costing Tool</h2>
-        <p>Select a recipe from the sidebar to view and edit its costing, or create a new one.</p>
-      </div>
-    </div>
-  </main>
-</div>
+  </div>
+</main>
+
+</div><!-- .app -->
 
 <script>
-// ── DATA ──────────────────────────────────────────────────────────────────────
+// ══ DATA ══════════════════════════════════════════════════════════════════════
 const LOGO = "data:image/png;base64,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";
-const BASE_INGREDIENTS = [{"name": "Whitebait", "unit": "kg", "cost": 75.0, "allergen": "Fish", "dietary": "", "type": "Ingredient"}, {"name": "Lemon Wedge (10gms unit is per KG)", "unit": "each", "cost": 5.0, "allergen": "", "dietary": "Vegan", "type": "Ingredient"}, {"name": "Tartare Sauce", "unit": "Ltr", "cost": 11.0, "allergen": "Dairy", "dietary": "", "type": "Ingredient"}, {"name": "Coleslaw", "unit": "kg", "cost": 10.0, "allergen": "Egg", "dietary": "Vegatarian", "type": "Ingredient"}, {"name": "Bap - Plain 65gm", "unit": "each", "cost": 0.75, "allergen": "Gluten", "dietary": "", "type": "Ingredient"}, {"name": "Butter", "unit": "kg", "cost": 14.0, "allergen": "Dairy", "dietary": "", "type": "Ingredient"}, {"name": "Egg #6 (each)", "unit": "1/2 doz", "cost": 0.58, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Tartare Sauce 1 ltr", "unit": "Ltr", "cost": 10.0, "allergen": "Egg", "dietary": "", "type": "Ingredient"}, {"name": "BOX BURGER (BD-79186)", "unit": "Each", "cost": 0.17, "allergen": "", "dietary": "", "type": "Other"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "unit": "Each", "cost": 0.02, "allergen": "", "dietary": "", "type": "Other"}, {"name": "Gurnard", "unit": "kg", "cost": 9.0, "allergen": "Fish", "dietary": "", "type": "Ingredient"}, {"name": "Mr Chips 10mm Golden Homestyle Fries", "unit": "kg", "cost": 3.7, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Standard Fish Batter", "unit": "kg", "cost": 4.0, "allergen": "Gluten", "dietary": "", "type": "Ingredient"}, {"name": "FORKS WOOD 16CM BIRCH", "unit": "each", "cost": 0.03, "allergen": "", "dietary": "", "type": "Other"}, {"name": "BOX DINNER BIOBOARD UNLINED", "unit": "each", "cost": 0.3, "allergen": "", "dietary": "", "type": "Other"}, {"name": "CUP PORT BIOCANE 2OZ WHT", "unit": "each", "cost": 0.05, "allergen": "", "dietary": "", "type": "Other"}, {"name": "Hoki Fillet", "unit": "kg", "cost": 5.77, "allergen": "Fish", "dietary": "", "type": "Ingredient"}, {"name": "Box Hot Dog Bioboard", "unit": "each", "cost": 0.2, "allergen": "", "dietary": "", "type": "Other"}, {"name": "Lemon Mayo", "unit": "Ltr", "cost": 8.0, "allergen": "Egg", "dietary": "", "type": "Ingredient"}, {"name": "Blue Cod - Fillet Skn Off BO", "unit": "kg", "cost": 22.94, "allergen": "Fish", "dietary": "", "type": "Ingredient"}, {"name": "Lemon Sole Fillet Skn Off BO", "unit": "kg", "cost": 10.7, "allergen": "Fish", "dietary": "", "type": "Ingredient"}, {"name": "Panko Crumb (Crumbing)", "unit": "kg", "cost": 6.0, "allergen": "Gluten", "dietary": "", "type": "Ingredient"}, {"name": "Seasoned Flour (Crumbing)", "unit": "kg", "cost": 2.0, "allergen": "Gluten", "dietary": "", "type": "Ingredient"}, {"name": "Potato Salad", "unit": "kg", "cost": 9.0, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Watercress", "unit": "Pkt", "cost": 9.0, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Potato Salad Dressing", "unit": "Ltr", "cost": 5.0, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "SQUID CRISPY SPICED TEN 5X1KG", "unit": "kg", "cost": 15.65, "allergen": "Crustacean", "dietary": "", "type": "Ingredient"}, {"name": "Sriracha Mayo", "unit": "Ltr", "cost": 9.0, "allergen": "Egg", "dietary": "", "type": "Ingredient"}, {"name": "Seasoning (Flaky Salt / Cracked Pepper)", "unit": "kg", "cost": 28.0, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Fresh Mussels (Meat) Med", "unit": "each", "cost": 0.5, "allergen": "Mollusc", "dietary": "", "type": "Ingredient"}, {"name": "Marlb 1/2 Shell Oyster - Standard", "unit": "each", "cost": 1.68, "allergen": "Mollusc", "dietary": "", "type": "Ingredient"}, {"name": "LETTUCE LEAF MIX", "unit": "kg", "cost": 25.0, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Bap - Milk (80g)", "unit": "each", "cost": 1.5, "allergen": "Gluten", "dietary": "", "type": "Ingredient"}, {"name": "Cheese Slices Swiss (20g slice) - Bid 50320", "unit": "kg", "cost": 21.45, "allergen": "Dairy", "dietary": "", "type": "Ingredient"}, {"name": "Pickles Sweet & Spicy Crinkle Cut - Bid105844", "unit": "kg", "cost": 12.0, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Groper Fillet Skn On", "unit": "kg", "cost": 17.24, "allergen": "Fish", "dietary": "", "type": "Ingredient"}, {"name": "Butter - salted", "unit": "kg", "cost": 16.0, "allergen": "Dairy", "dietary": "", "type": "Ingredient"}, {"name": "Tomatoes Fresh", "unit": "kg", "cost": 12.0, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Avocado Fresh", "unit": "Each", "cost": 2.0, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Garlic Butter", "unit": "kg", "cost": 20.0, "allergen": "Dairy", "dietary": "", "type": "Ingredient"}, {"name": "Tortilla 6\" Flour - Taco", "unit": "each", "cost": 0.55, "allergen": "Gluten", "dietary": "", "type": "Ingredient"}, {"name": "Chipotle Mayo", "unit": "Ltr", "cost": 10.0, "allergen": "Egg", "dietary": "", "type": "Ingredient"}, {"name": "Rhubarb Pico de Gallo", "unit": "kg", "cost": 8.0, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Tomato Red Onion Pickle", "unit": "kg", "cost": 12.0, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Roast Corn Salsa", "unit": "kg", "cost": 10.0, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Sour Cream", "unit": "Ltr", "cost": 7.5, "allergen": "Dairy", "dietary": "", "type": "Ingredient"}, {"name": "Fish Bites", "unit": "kg", "cost": 10.0, "allergen": "Fish, Gluten", "dietary": "", "type": "Ingredient"}, {"name": "Beetroot Sauerkraut", "unit": "kg", "cost": 14.0, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Pretzel Bap 80g", "unit": "each", "cost": 1.4, "allergen": "Gluten", "dietary": "", "type": "Ingredient"}, {"name": "Salmon Fillet - Akaroa", "unit": "kg", "cost": 44.0, "allergen": "Fish", "dietary": "", "type": "Ingredient"}, {"name": "PR CUT GREEN WT 21/25 10X1KG SCU (20g each)", "unit": "kg", "cost": 16.0, "allergen": "Crustacean", "dietary": "", "type": "Ingredient"}, {"name": "SCALLOP CH 21/30 10X1KG", "unit": "kg", "cost": 28.9, "allergen": "Mollusc", "dietary": "", "type": "Ingredient"}, {"name": "McClures Pickle/Gherkin 20kg pail yeilds approx\n525 units (20g each) @ $165 pail = .31c each", "unit": "each", "cost": 0.31, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Crayfish (Cooked) A Grade - 1/2 Portion", "unit": "Each", "cost": 25.0, "allergen": "Crustacean", "dietary": "", "type": "Ingredient"}, {"name": "Salmon Fillet - Frzn 175g portion NZKS", "unit": "Each", "cost": 4.03, "allergen": "Fish", "dietary": "", "type": "Ingredient"}, {"name": "Gherkin - Long Cut Slice", "unit": "KG", "cost": 6.5, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "SBW FILL TEMPURA 25X180G 4.5KG IND", "unit": "KG", "cost": 11.7, "allergen": "Fish, Gluten", "dietary": "", "type": "Ingredient"}, {"name": "Red Onion Pickle", "unit": "kg", "cost": 6.5, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Instructions", "unit": "", "cost": 0, "allergen": "", "dietary": "", "type": ""}, {"name": "Cells to add values", "unit": "", "cost": 0, "allergen": "", "dietary": "", "type": ""}, {"name": "Quantity", "unit": "", "cost": 0, "allergen": "", "dietary": "", "type": ""}, {"name": "Cost", "unit": "", "cost": 0, "allergen": "", "dietary": "", "type": ""}, {"name": "Unit", "unit": "", "cost": 0, "allergen": "", "dietary": "", "type": ""}, {"name": "Portions", "unit": "", "cost": 0, "allergen": "", "dietary": "", "type": ""}, {"name": "Wastage", "unit": "", "cost": 0, "allergen": "", "dietary": "", "type": ""}, {"name": "Updated portions", "unit": "", "cost": 0, "allergen": "", "dietary": "", "type": ""}, {"name": "Retail price", "unit": "", "cost": 0, "allergen": "", "dietary": "", "type": ""}];
-const BASE_RECIPES     = [{"id": "Whitebait_Buttie", "name": "Whitebait Buttie", "items": [{"name": "Whitebait", "qty": 0.03, "costPerUnit": 75.0, "unit": "kg"}, {"name": "Bap - Plain 65gm", "qty": 1.0, "costPerUnit": 0.75, "unit": "each"}, {"name": "Butter", "qty": 0.015, "costPerUnit": 14.0, "unit": "kg"}, {"name": "Egg #6 (each)", "qty": 1.0, "costPerUnit": 0.58, "unit": "1/2 doz"}, {"name": "Lemon Mayon", "qty": 0.02, "costPerUnit": 0, "unit": ""}, {"name": "Lemon Wedge (10gms unit is per KG)", "qty": 0.01, "costPerUnit": 5.0, "unit": "each"}, {"name": "BOX BURGER (BD-79186)", "qty": 1.0, "costPerUnit": 0.17, "unit": "Each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 18.0, "allergens": "Contains Fish, Egg, Dairy", "imageUrl": "", "notes": ""}, {"id": "FnC_Meal_Box", "name": "Fish & Chip Meal Box - Gurnard", "items": [{"name": "Gurnard", "qty": 0.1, "costPerUnit": 9.0, "unit": "kg"}, {"name": "Standard Fish Batter", "qty": 0.015, "costPerUnit": 4.0, "unit": "kg"}, {"name": "Mr Chips 10mm Golden Homestyle Fries", "qty": 0.3, "costPerUnit": 3.7, "unit": "kg"}, {"name": "Coleslaw", "qty": 0.1, "costPerUnit": 10.0, "unit": "kg"}, {"name": "Tartare Sauce 1 ltr", "qty": 0.015, "costPerUnit": 10.0, "unit": "Ltr"}, {"name": "Lemon Wedge (10gms unit is per KG)", "qty": 0.01, "costPerUnit": 5.0, "unit": "each"}, {"name": "BOX DINNER BIOBOARD UNLINED", "qty": 1.0, "costPerUnit": 0.3, "unit": "each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}, {"name": "FORKS WOOD 16CM BIRCH", "qty": 1.0, "costPerUnit": 0.03, "unit": "each"}, {"name": "CUP PORT BIOCANE 2OZ WHT", "qty": 1.0, "costPerUnit": 0.05, "unit": "each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 16.5, "allergens": "Contains Fish, Egg, Dairy", "imageUrl": "", "notes": ""}, {"id": "Blue_Cod_Box", "name": "Fish & Chip Express Box", "items": [{"name": "Blue Cod - Fillet Skn Off BO", "qty": 0.12, "costPerUnit": 22.94, "unit": "kg"}, {"name": "Standard Fish Batter", "qty": 0.015, "costPerUnit": 4.0, "unit": "kg"}, {"name": "Mr Chips 10mm Golden Homestyle Fries", "qty": 0.3, "costPerUnit": 3.7, "unit": "kg"}, {"name": "Tartare Sauce", "qty": 0.015, "costPerUnit": 11.0, "unit": "Ltr"}, {"name": "Lemon Wedge (10gms unit is per KG)", "qty": 0.01, "costPerUnit": 5.0, "unit": "each"}, {"name": "BOX DINNER BIOBOARD UNLINED", "qty": 1.0, "costPerUnit": 0.3, "unit": "each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}, {"name": "FORKS WOOD 16CM BIRCH", "qty": 1.0, "costPerUnit": 0.03, "unit": "each"}, {"name": "CUP PORT BIOCANE 2OZ WHT", "qty": 1.0, "costPerUnit": 0.05, "unit": "each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 21.0, "allergens": "Contains Fish, Egg, Dairy", "imageUrl": "", "notes": ""}, {"id": "FnC_Express", "name": "Fish & Chip Express Box", "items": [{"name": "SBW FILL TEMPURA 25X180G 4.5KG IND", "qty": 0.18, "costPerUnit": 11.7, "unit": "KG"}, {"name": "Mr Chips 10mm Golden Homestyle Fries", "qty": 0.25, "costPerUnit": 3.7, "unit": "kg"}, {"name": "Tartare Sauce", "qty": 0.02, "costPerUnit": 11.0, "unit": "Ltr"}, {"name": "Box Hot Dog Bioboard", "qty": 1.0, "costPerUnit": 0.2, "unit": "each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 16.5, "allergens": "Contains Fish, Egg, Dairy", "imageUrl": "", "notes": ""}, {"id": "Sole_Schnitzel", "name": "Sole Schnitzel & Potato Salad", "items": [{"name": "Lemon Sole Fillet Skn Off BO", "qty": 0.15, "costPerUnit": 10.7, "unit": "kg"}, {"name": "Standard Fish Batter", "qty": 0.01, "costPerUnit": 4.0, "unit": "kg"}, {"name": "Seasoned Flour (Crumbing)", "qty": 0.01, "costPerUnit": 2.0, "unit": "kg"}, {"name": "Panko Crumb (Crumbing)", "qty": 0.015, "costPerUnit": 6.0, "unit": "kg"}, {"name": "Lemon Wedge (10gms unit is per KG)", "qty": 0.01, "costPerUnit": 5.0, "unit": "each"}, {"name": "Potato Salad", "qty": 0.1, "costPerUnit": 9.0, "unit": "kg"}, {"name": "Potato Salad Dressing", "qty": 0.02, "costPerUnit": 5.0, "unit": "Ltr"}, {"name": "Watercress", "qty": 0.02, "costPerUnit": 9.0, "unit": "Pkt"}, {"name": "BOX DINNER BIOBOARD UNLINED", "qty": 1.0, "costPerUnit": 0.3, "unit": "each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}, {"name": "FORKS WOOD 16CM BIRCH", "qty": 1.0, "costPerUnit": 0.03, "unit": "each"}, {"name": "McClures Pickle/Gherkin 20kg pail yeilds approx\n525 units (20g each) @ $165 pail = .31c each", "qty": 1.0, "costPerUnit": 0.31, "unit": "each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 16.5, "allergens": "Contains Fish, Egg, Dairy", "imageUrl": "", "notes": ""}, {"id": "Crispy_Spiced_Squid", "name": "Crispy Spicy Squid Tents", "items": [{"name": "SQUID CRISPY SPICED TEN 5X1KG", "qty": 0.15, "costPerUnit": 15.65, "unit": "kg"}, {"name": "Sriracha Mayo", "qty": 0.03, "costPerUnit": 9.0, "unit": "Ltr"}, {"name": "Seasoning (Flaky Salt / Cracked Pepper)", "qty": 0.0005, "costPerUnit": 28.0, "unit": "kg"}, {"name": "Lemon Wedge (10gms unit is per KG)", "qty": 0.01, "costPerUnit": 5.0, "unit": "each"}, {"name": "BOX BURGER (BD-79186)", "qty": 1.0, "costPerUnit": 0.17, "unit": "Each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}, {"name": "CUP PORT BIOCANE 2OZ WHT", "qty": 1.0, "costPerUnit": 0.05, "unit": "each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 13.0, "allergens": "Contains Crustacean, Egg", "imageUrl": "", "notes": ""}, {"id": "Battered_Mussels", "name": "Battered Mussels - 6/Half Doz", "items": [{"name": "Fresh Mussels (Meat) Med", "qty": 6.0, "costPerUnit": 0.5, "unit": "each"}, {"name": "Standard Fish Batter", "qty": 0.03, "costPerUnit": 4.0, "unit": "kg"}, {"name": "Seasoning (Flaky Salt / Cracked Pepper)", "qty": 0.0005, "costPerUnit": 28.0, "unit": "kg"}, {"name": "BOX BURGER (BD-79186)", "qty": 1.0, "costPerUnit": 0.17, "unit": "Each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 15.0, "allergens": "Contains Crustacean, Egg", "imageUrl": "", "notes": ""}, {"id": "Half_Shell_Oyst_each", "name": "Battered Mussels - 6/Half Doz", "items": [{"name": "Marlb 1/2 Shell Oyster - Standard", "qty": 1.0, "costPerUnit": 1.68, "unit": "each"}, {"name": "Lemon Wedge (10gms unit is per KG)", "qty": 0.01, "costPerUnit": 5.0, "unit": "each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 4.0, "allergens": "Contains Crustacean, Egg", "imageUrl": "", "notes": ""}, {"id": "Half_Shell_Oyst_6", "name": "Battered Mussels - 6/Half Doz", "items": [{"name": "Marlb 1/2 Shell Oyster - Standard", "qty": 6.0, "costPerUnit": 1.68, "unit": "each"}, {"name": "Lemon Wedge (10gms unit is per KG)", "qty": 0.01, "costPerUnit": 5.0, "unit": "each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}, {"name": "BOX DINNER BIOBOARD UNLINED", "qty": 1.0, "costPerUnit": 0.3, "unit": "each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 20.0, "allergens": "Contains Crustacean, Egg", "imageUrl": "", "notes": ""}, {"id": "Crispy_Fish_Burger", "name": "Crispy Fish Burger Meal - Hoki", "items": [{"name": "Hoki Fillet", "qty": 0.1, "costPerUnit": 5.77, "unit": "kg"}, {"name": "Standard Fish Batter", "qty": 0.015, "costPerUnit": 4.0, "unit": "kg"}, {"name": "Mr Chips 10mm Golden Homestyle Fries", "qty": 0.25, "costPerUnit": 3.7, "unit": "kg"}, {"name": "LETTUCE LEAF MIX", "qty": 0.02, "costPerUnit": 25.0, "unit": "kg"}, {"name": "Tartare Sauce 1 ltr", "qty": 0.025, "costPerUnit": 10.0, "unit": "Ltr"}, {"name": "Lemon Wedge (10gms unit is per KG)", "qty": 0.01, "costPerUnit": 5.0, "unit": "each"}, {"name": "Cheese Slices Swiss (20g slice) - Bid 50320", "qty": 0.02, "costPerUnit": 21.45, "unit": "kg"}, {"name": "Pickles Sweet & Spicy Crinkle Cut - Bid105844", "qty": 0.03, "costPerUnit": 12.0, "unit": "kg"}, {"name": "Box Hot Dog Bioboard", "qty": 1.0, "costPerUnit": 0.2, "unit": "each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 16.0, "allergens": "Contains Fish, Egg, Dairy", "imageUrl": "", "notes": ""}, {"id": "Grilled_Groper_Burger", "name": "Grilled Groper Burger", "items": [{"name": "Groper Fillet Skn On", "qty": 0.13, "costPerUnit": 17.24, "unit": "kg"}, {"name": "Garlic Butter", "qty": 0.015, "costPerUnit": 20.0, "unit": "kg"}, {"name": "Avocado Fresh", "qty": 0.25, "costPerUnit": 2.0, "unit": "Each"}, {"name": "LETTUCE LEAF MIX", "qty": 0.02, "costPerUnit": 25.0, "unit": "kg"}, {"name": "Lemon Mayo", "qty": 0.025, "costPerUnit": 8.0, "unit": "Ltr"}, {"name": "Tomatoes Fresh", "qty": 0.03, "costPerUnit": 12.0, "unit": "kg"}, {"name": "BOX BURGER (BD-79186)", "qty": 1.0, "costPerUnit": 0.17, "unit": "Each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 18.5, "allergens": "Contains Fish, Egg, Dairy", "imageUrl": "", "notes": ""}, {"id": "2_Tasty_Tacos", "name": "2 Tasty Taco's (one of each)", "items": [{"name": "Tortilla 6\" Flour - Taco", "qty": 1.0, "costPerUnit": 0.55, "unit": "each"}, {"name": "Fish Bites", "qty": 0.05, "costPerUnit": 10.0, "unit": "kg"}, {"name": "Rhubarb Pico de Gallo", "qty": 0.02, "costPerUnit": 8.0, "unit": "kg"}, {"name": "Coleslaw", "qty": 0.01, "costPerUnit": 10.0, "unit": "kg"}, {"name": "Chipotle Mayo", "qty": 0.025, "costPerUnit": 10.0, "unit": "Ltr"}, {"name": "Tortilla 6\" Flour - Taco", "qty": 1.0, "costPerUnit": 0.55, "unit": "each"}, {"name": "SQUID CRISPY SPICED TEN 5X1KG", "qty": 0.05, "costPerUnit": 15.65, "unit": "kg"}, {"name": "Tomato Red Onion Pickle", "qty": 0.015, "costPerUnit": 12.0, "unit": "kg"}, {"name": "Roast Corn Salsa", "qty": 0.015, "costPerUnit": 10.0, "unit": "kg"}, {"name": "LETTUCE LEAF MIX", "qty": 0.01, "costPerUnit": 25.0, "unit": "kg"}, {"name": "Sour Cream", "qty": 0.01, "costPerUnit": 7.5, "unit": "Ltr"}, {"name": "Box Hot Dog Bioboard", "qty": 1.0, "costPerUnit": 0.2, "unit": "each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 16.5, "allergens": "Contains Fish, Egg, Dairy", "imageUrl": "", "notes": ""}, {"id": "Salmon_Pastrami_Reuben_Roll", "name": "Salmon Pastrami Reuben Roll", "items": [{"name": "Pretzel Bap 80g", "qty": 1.0, "costPerUnit": 1.4, "unit": "each"}, {"name": "Salmon Fillet - Frzn 175g portion NZKS", "qty": 0.5, "costPerUnit": 4.03, "unit": "Each"}, {"name": "Beetroot Sauerkraut", "qty": 0.03, "costPerUnit": 14.0, "unit": "kg"}, {"name": "Cheese Slices Swiss (20g slice) - Bid 50320", "qty": 0.02, "costPerUnit": 21.45, "unit": "kg"}, {"name": "Red Onion Pickle", "qty": 0.015, "costPerUnit": 6.5, "unit": "kg"}, {"name": "Sour Cream", "qty": 0.03, "costPerUnit": 7.5, "unit": "Ltr"}, {"name": "BOX BURGER (BD-79186)", "qty": 1.0, "costPerUnit": 0.17, "unit": "Each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 18.0, "allergens": "Contains Fish, Egg, Dairy", "imageUrl": "", "notes": ""}, {"id": "Grilled_Meal_Box", "name": "Grilled Meal Box", "items": [{"name": "Gurnard", "qty": 0.18, "costPerUnit": 9.0, "unit": "kg"}, {"name": "Fresh Mussels (Meat) Med", "qty": 0, "costPerUnit": 0.5, "unit": "each"}, {"name": "PR CUT GREEN WT 21/25 10X1KG SCU (20g each)", "qty": 0, "costPerUnit": 16.0, "unit": "kg"}, {"name": "SCALLOP CH 21/30 10X1KG", "qty": 0, "costPerUnit": 28.9, "unit": "kg"}, {"name": "LETTUCE LEAF MIX", "qty": 0.02, "costPerUnit": 25.0, "unit": "kg"}, {"name": "Tartare Sauce", "qty": 0.015, "costPerUnit": 11.0, "unit": "Ltr"}, {"name": "Potato Salad", "qty": 0.1, "costPerUnit": 9.0, "unit": "kg"}, {"name": "Potato Salad Dressing", "qty": 0.02, "costPerUnit": 5.0, "unit": "Ltr"}, {"name": "McClures Pickle/Gherkin 20kg pail yeilds approx\n525 units (20g each) @ $165 pail = .31c each", "qty": 1.0, "costPerUnit": 0.31, "unit": "each"}, {"name": "BOX DINNER BIOBOARD UNLINED", "qty": 1.0, "costPerUnit": 0.3, "unit": "each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}, {"name": "FORKS WOOD 16CM BIRCH", "qty": 1.0, "costPerUnit": 0.03, "unit": "each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 18.5, "allergens": "Contains Fish, Egg, Dairy", "imageUrl": "", "notes": ""}, {"id": "Half_Crayfish_n_Chips", "name": "Grilled Meal Box", "items": [{"name": "Crayfish (Cooked) A Grade - 1/2 Portion", "qty": 1.0, "costPerUnit": 25.0, "unit": "Each"}, {"name": "Mr Chips 10mm Golden Homestyle Fries", "qty": 0.2, "costPerUnit": 3.7, "unit": "kg"}, {"name": "Lemon Wedge (10gms unit is per KG)", "qty": 0.3, "costPerUnit": 5.0, "unit": "each"}, {"name": "Garlic Butter", "qty": 0.05, "costPerUnit": 20.0, "unit": "kg"}, {"name": "BOX DINNER BIOBOARD UNLINED", "qty": 1.0, "costPerUnit": 0.3, "unit": "each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}, {"name": "FORKS WOOD 16CM BIRCH", "qty": 1.0, "costPerUnit": 0.03, "unit": "each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 55.0, "allergens": "Contains Fish, Egg, Dairy", "imageUrl": "", "notes": ""}, {"id": "Salmon_Pastrami_Roll_v2", "name": "Salmon Pastrami Reuban Roll", "items": [{"name": "Pretzel Bap 80g", "qty": 1.0, "costPerUnit": 1.4, "unit": "each"}, {"name": "Salmon Fillet - Frzn 175g portion NZKS", "qty": 0.5, "costPerUnit": 4.03, "unit": "Each"}, {"name": "Beetroot Sauerkraut", "qty": 0.03, "costPerUnit": 14.0, "unit": "kg"}, {"name": "Cheese Slices Swiss (20g slice) - Bid 50320", "qty": 0.02, "costPerUnit": 21.45, "unit": "kg"}, {"name": "Red Onion Pickle", "qty": 0.015, "costPerUnit": 6.5, "unit": "kg"}, {"name": "Sour Cream", "qty": 0.03, "costPerUnit": 7.5, "unit": "Ltr"}, {"name": "Gherkin - Long Cut Slice", "qty": 0.015, "costPerUnit": 6.5, "unit": "KG"}, {"name": "BOX BURGER (BD-79186)", "qty": 1.0, "costPerUnit": 0.17, "unit": "Each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 16.0, "allergens": "Contains Fish, Egg, Dairy", "imageUrl": "", "notes": ""}];
+const BASE_ING = [{"name": "Whitebait", "unit": "kg", "cost": 75.0, "allergen": "Fish", "dietary": "", "type": "Ingredient"}, {"name": "Lemon Wedge (10gms unit is per KG)", "unit": "each", "cost": 5.0, "allergen": "", "dietary": "Vegan", "type": "Ingredient"}, {"name": "Tartare Sauce", "unit": "Ltr", "cost": 11.0, "allergen": "Dairy", "dietary": "", "type": "Ingredient"}, {"name": "Coleslaw", "unit": "kg", "cost": 10.0, "allergen": "Egg", "dietary": "Vegatarian", "type": "Ingredient"}, {"name": "Bap - Plain 65gm", "unit": "each", "cost": 0.75, "allergen": "Gluten", "dietary": "", "type": "Ingredient"}, {"name": "Butter", "unit": "kg", "cost": 14.0, "allergen": "Dairy", "dietary": "", "type": "Ingredient"}, {"name": "Egg #6 (each)", "unit": "1/2 doz", "cost": 0.58, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Tartare Sauce 1 ltr", "unit": "Ltr", "cost": 10.0, "allergen": "Egg", "dietary": "", "type": "Ingredient"}, {"name": "BOX BURGER (BD-79186)", "unit": "Each", "cost": 0.17, "allergen": "", "dietary": "", "type": "Other"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "unit": "Each", "cost": 0.02, "allergen": "", "dietary": "", "type": "Other"}, {"name": "Gurnard", "unit": "kg", "cost": 9.0, "allergen": "Fish", "dietary": "", "type": "Ingredient"}, {"name": "Mr Chips 10mm Golden Homestyle Fries", "unit": "kg", "cost": 3.7, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Standard Fish Batter", "unit": "kg", "cost": 4.0, "allergen": "Gluten", "dietary": "", "type": "Ingredient"}, {"name": "FORKS WOOD 16CM BIRCH", "unit": "each", "cost": 0.03, "allergen": "", "dietary": "", "type": "Other"}, {"name": "BOX DINNER BIOBOARD UNLINED", "unit": "each", "cost": 0.3, "allergen": "", "dietary": "", "type": "Other"}, {"name": "CUP PORT BIOCANE 2OZ WHT", "unit": "each", "cost": 0.05, "allergen": "", "dietary": "", "type": "Other"}, {"name": "Hoki Fillet", "unit": "kg", "cost": 5.77, "allergen": "Fish", "dietary": "", "type": "Ingredient"}, {"name": "Box Hot Dog Bioboard", "unit": "each", "cost": 0.2, "allergen": "", "dietary": "", "type": "Other"}, {"name": "Lemon Mayo", "unit": "Ltr", "cost": 8.0, "allergen": "Egg", "dietary": "", "type": "Ingredient"}, {"name": "Blue Cod - Fillet Skn Off BO", "unit": "kg", "cost": 22.94, "allergen": "Fish", "dietary": "", "type": "Ingredient"}, {"name": "Lemon Sole Fillet Skn Off BO", "unit": "kg", "cost": 10.7, "allergen": "Fish", "dietary": "", "type": "Ingredient"}, {"name": "Panko Crumb (Crumbing)", "unit": "kg", "cost": 6.0, "allergen": "Gluten", "dietary": "", "type": "Ingredient"}, {"name": "Seasoned Flour (Crumbing)", "unit": "kg", "cost": 2.0, "allergen": "Gluten", "dietary": "", "type": "Ingredient"}, {"name": "Potato Salad", "unit": "kg", "cost": 9.0, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Watercress", "unit": "Pkt", "cost": 9.0, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Potato Salad Dressing", "unit": "Ltr", "cost": 5.0, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "SQUID CRISPY SPICED TEN 5X1KG", "unit": "kg", "cost": 15.65, "allergen": "Crustacean", "dietary": "", "type": "Ingredient"}, {"name": "Sriracha Mayo", "unit": "Ltr", "cost": 9.0, "allergen": "Egg", "dietary": "", "type": "Ingredient"}, {"name": "Seasoning (Flaky Salt / Cracked Pepper)", "unit": "kg", "cost": 28.0, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Fresh Mussels (Meat) Med", "unit": "each", "cost": 0.5, "allergen": "Mollusc", "dietary": "", "type": "Ingredient"}, {"name": "Marlb 1/2 Shell Oyster - Standard", "unit": "each", "cost": 1.68, "allergen": "Mollusc", "dietary": "", "type": "Ingredient"}, {"name": "LETTUCE LEAF MIX", "unit": "kg", "cost": 25.0, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Bap - Milk (80g)", "unit": "each", "cost": 1.5, "allergen": "Gluten", "dietary": "", "type": "Ingredient"}, {"name": "Cheese Slices Swiss (20g slice) - Bid 50320", "unit": "kg", "cost": 21.45, "allergen": "Dairy", "dietary": "", "type": "Ingredient"}, {"name": "Pickles Sweet & Spicy Crinkle Cut - Bid105844", "unit": "kg", "cost": 12.0, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Groper Fillet Skn On", "unit": "kg", "cost": 17.24, "allergen": "Fish", "dietary": "", "type": "Ingredient"}, {"name": "Butter - salted", "unit": "kg", "cost": 16.0, "allergen": "Dairy", "dietary": "", "type": "Ingredient"}, {"name": "Tomatoes Fresh", "unit": "kg", "cost": 12.0, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Avocado Fresh", "unit": "Each", "cost": 2.0, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Garlic Butter", "unit": "kg", "cost": 20.0, "allergen": "Dairy", "dietary": "", "type": "Ingredient"}, {"name": "Tortilla 6\" Flour - Taco", "unit": "each", "cost": 0.55, "allergen": "Gluten", "dietary": "", "type": "Ingredient"}, {"name": "Chipotle Mayo", "unit": "Ltr", "cost": 10.0, "allergen": "Egg", "dietary": "", "type": "Ingredient"}, {"name": "Rhubarb Pico de Gallo", "unit": "kg", "cost": 8.0, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Tomato Red Onion Pickle", "unit": "kg", "cost": 12.0, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Roast Corn Salsa", "unit": "kg", "cost": 10.0, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Sour Cream", "unit": "Ltr", "cost": 7.5, "allergen": "Dairy", "dietary": "", "type": "Ingredient"}, {"name": "Fish Bites", "unit": "kg", "cost": 10.0, "allergen": "Fish, Gluten", "dietary": "", "type": "Ingredient"}, {"name": "Beetroot Sauerkraut", "unit": "kg", "cost": 14.0, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Pretzel Bap 80g", "unit": "each", "cost": 1.4, "allergen": "Gluten", "dietary": "", "type": "Ingredient"}, {"name": "Salmon Fillet - Akaroa", "unit": "kg", "cost": 44.0, "allergen": "Fish", "dietary": "", "type": "Ingredient"}, {"name": "PR CUT GREEN WT 21/25 10X1KG SCU (20g each)", "unit": "kg", "cost": 16.0, "allergen": "Crustacean", "dietary": "", "type": "Ingredient"}, {"name": "SCALLOP CH 21/30 10X1KG", "unit": "kg", "cost": 28.9, "allergen": "Mollusc", "dietary": "", "type": "Ingredient"}, {"name": "McClures Pickle/Gherkin 20kg pail yeilds approx\n525 units (20g each) @ $165 pail = .31c each", "unit": "each", "cost": 0.31, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Crayfish (Cooked) A Grade - 1/2 Portion", "unit": "Each", "cost": 25.0, "allergen": "Crustacean", "dietary": "", "type": "Ingredient"}, {"name": "Salmon Fillet - Frzn 175g portion NZKS", "unit": "Each", "cost": 4.03, "allergen": "Fish", "dietary": "", "type": "Ingredient"}, {"name": "Gherkin - Long Cut Slice", "unit": "KG", "cost": 6.5, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "SBW FILL TEMPURA 25X180G 4.5KG IND", "unit": "KG", "cost": 11.7, "allergen": "Fish, Gluten", "dietary": "", "type": "Ingredient"}, {"name": "Red Onion Pickle", "unit": "kg", "cost": 6.5, "allergen": "", "dietary": "", "type": "Ingredient"}, {"name": "Instructions", "unit": "", "cost": 0, "allergen": "", "dietary": "", "type": ""}, {"name": "Cells to add values", "unit": "", "cost": 0, "allergen": "", "dietary": "", "type": ""}, {"name": "Quantity", "unit": "", "cost": 0, "allergen": "", "dietary": "", "type": ""}, {"name": "Cost", "unit": "", "cost": 0, "allergen": "", "dietary": "", "type": ""}, {"name": "Unit", "unit": "", "cost": 0, "allergen": "", "dietary": "", "type": ""}, {"name": "Portions", "unit": "", "cost": 0, "allergen": "", "dietary": "", "type": ""}, {"name": "Wastage", "unit": "", "cost": 0, "allergen": "", "dietary": "", "type": ""}, {"name": "Updated portions", "unit": "", "cost": 0, "allergen": "", "dietary": "", "type": ""}, {"name": "Retail price", "unit": "", "cost": 0, "allergen": "", "dietary": "", "type": ""}];
+const BASE_REC = [{"id": "Whitebait_Buttie", "name": "Whitebait Buttie", "items": [{"name": "Whitebait", "qty": 0.03, "costPerUnit": 75.0, "unit": "kg"}, {"name": "Bap - Plain 65gm", "qty": 1.0, "costPerUnit": 0.75, "unit": "each"}, {"name": "Butter", "qty": 0.015, "costPerUnit": 14.0, "unit": "kg"}, {"name": "Egg #6 (each)", "qty": 1.0, "costPerUnit": 0.58, "unit": "1/2 doz"}, {"name": "Lemon Mayon", "qty": 0.02, "costPerUnit": 0, "unit": ""}, {"name": "Lemon Wedge (10gms unit is per KG)", "qty": 0.01, "costPerUnit": 5.0, "unit": "each"}, {"name": "BOX BURGER (BD-79186)", "qty": 1.0, "costPerUnit": 0.17, "unit": "Each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 18.0, "allergens": "Contains Fish, Egg, Dairy", "imageUrl": "", "notes": ""}, {"id": "FnC_Meal_Box", "name": "Fish & Chip Meal Box - Gurnard", "items": [{"name": "Gurnard", "qty": 0.1, "costPerUnit": 9.0, "unit": "kg"}, {"name": "Standard Fish Batter", "qty": 0.015, "costPerUnit": 4.0, "unit": "kg"}, {"name": "Mr Chips 10mm Golden Homestyle Fries", "qty": 0.3, "costPerUnit": 3.7, "unit": "kg"}, {"name": "Coleslaw", "qty": 0.1, "costPerUnit": 10.0, "unit": "kg"}, {"name": "Tartare Sauce 1 ltr", "qty": 0.015, "costPerUnit": 10.0, "unit": "Ltr"}, {"name": "Lemon Wedge (10gms unit is per KG)", "qty": 0.01, "costPerUnit": 5.0, "unit": "each"}, {"name": "BOX DINNER BIOBOARD UNLINED", "qty": 1.0, "costPerUnit": 0.3, "unit": "each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}, {"name": "FORKS WOOD 16CM BIRCH", "qty": 1.0, "costPerUnit": 0.03, "unit": "each"}, {"name": "CUP PORT BIOCANE 2OZ WHT", "qty": 1.0, "costPerUnit": 0.05, "unit": "each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 16.5, "allergens": "Contains Fish, Egg, Dairy", "imageUrl": "", "notes": ""}, {"id": "Blue_Cod_Box", "name": "Fish & Chip Express Box", "items": [{"name": "Blue Cod - Fillet Skn Off BO", "qty": 0.12, "costPerUnit": 22.94, "unit": "kg"}, {"name": "Standard Fish Batter", "qty": 0.015, "costPerUnit": 4.0, "unit": "kg"}, {"name": "Mr Chips 10mm Golden Homestyle Fries", "qty": 0.3, "costPerUnit": 3.7, "unit": "kg"}, {"name": "Tartare Sauce", "qty": 0.015, "costPerUnit": 11.0, "unit": "Ltr"}, {"name": "Lemon Wedge (10gms unit is per KG)", "qty": 0.01, "costPerUnit": 5.0, "unit": "each"}, {"name": "BOX DINNER BIOBOARD UNLINED", "qty": 1.0, "costPerUnit": 0.3, "unit": "each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}, {"name": "FORKS WOOD 16CM BIRCH", "qty": 1.0, "costPerUnit": 0.03, "unit": "each"}, {"name": "CUP PORT BIOCANE 2OZ WHT", "qty": 1.0, "costPerUnit": 0.05, "unit": "each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 21.0, "allergens": "Contains Fish, Egg, Dairy", "imageUrl": "", "notes": ""}, {"id": "FnC_Express", "name": "Fish & Chip Express Box", "items": [{"name": "SBW FILL TEMPURA 25X180G 4.5KG IND", "qty": 0.18, "costPerUnit": 11.7, "unit": "KG"}, {"name": "Mr Chips 10mm Golden Homestyle Fries", "qty": 0.25, "costPerUnit": 3.7, "unit": "kg"}, {"name": "Tartare Sauce", "qty": 0.02, "costPerUnit": 11.0, "unit": "Ltr"}, {"name": "Box Hot Dog Bioboard", "qty": 1.0, "costPerUnit": 0.2, "unit": "each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 16.5, "allergens": "Contains Fish, Egg, Dairy", "imageUrl": "", "notes": ""}, {"id": "Sole_Schnitzel", "name": "Sole Schnitzel & Potato Salad", "items": [{"name": "Lemon Sole Fillet Skn Off BO", "qty": 0.15, "costPerUnit": 10.7, "unit": "kg"}, {"name": "Standard Fish Batter", "qty": 0.01, "costPerUnit": 4.0, "unit": "kg"}, {"name": "Seasoned Flour (Crumbing)", "qty": 0.01, "costPerUnit": 2.0, "unit": "kg"}, {"name": "Panko Crumb (Crumbing)", "qty": 0.015, "costPerUnit": 6.0, "unit": "kg"}, {"name": "Lemon Wedge (10gms unit is per KG)", "qty": 0.01, "costPerUnit": 5.0, "unit": "each"}, {"name": "Potato Salad", "qty": 0.1, "costPerUnit": 9.0, "unit": "kg"}, {"name": "Potato Salad Dressing", "qty": 0.02, "costPerUnit": 5.0, "unit": "Ltr"}, {"name": "Watercress", "qty": 0.02, "costPerUnit": 9.0, "unit": "Pkt"}, {"name": "BOX DINNER BIOBOARD UNLINED", "qty": 1.0, "costPerUnit": 0.3, "unit": "each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}, {"name": "FORKS WOOD 16CM BIRCH", "qty": 1.0, "costPerUnit": 0.03, "unit": "each"}, {"name": "McClures Pickle/Gherkin 20kg pail yeilds approx\n525 units (20g each) @ $165 pail = .31c each", "qty": 1.0, "costPerUnit": 0.31, "unit": "each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 16.5, "allergens": "Contains Fish, Egg, Dairy", "imageUrl": "", "notes": ""}, {"id": "Crispy_Spiced_Squid", "name": "Crispy Spicy Squid Tents", "items": [{"name": "SQUID CRISPY SPICED TEN 5X1KG", "qty": 0.15, "costPerUnit": 15.65, "unit": "kg"}, {"name": "Sriracha Mayo", "qty": 0.03, "costPerUnit": 9.0, "unit": "Ltr"}, {"name": "Seasoning (Flaky Salt / Cracked Pepper)", "qty": 0.0005, "costPerUnit": 28.0, "unit": "kg"}, {"name": "Lemon Wedge (10gms unit is per KG)", "qty": 0.01, "costPerUnit": 5.0, "unit": "each"}, {"name": "BOX BURGER (BD-79186)", "qty": 1.0, "costPerUnit": 0.17, "unit": "Each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}, {"name": "CUP PORT BIOCANE 2OZ WHT", "qty": 1.0, "costPerUnit": 0.05, "unit": "each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 13.0, "allergens": "Contains Crustacean, Egg", "imageUrl": "", "notes": ""}, {"id": "Battered_Mussels", "name": "Battered Mussels - 6/Half Doz", "items": [{"name": "Fresh Mussels (Meat) Med", "qty": 6.0, "costPerUnit": 0.5, "unit": "each"}, {"name": "Standard Fish Batter", "qty": 0.03, "costPerUnit": 4.0, "unit": "kg"}, {"name": "Seasoning (Flaky Salt / Cracked Pepper)", "qty": 0.0005, "costPerUnit": 28.0, "unit": "kg"}, {"name": "BOX BURGER (BD-79186)", "qty": 1.0, "costPerUnit": 0.17, "unit": "Each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 15.0, "allergens": "Contains Crustacean, Egg", "imageUrl": "", "notes": ""}, {"id": "Half_Shell_Oyst_each", "name": "Battered Mussels - 6/Half Doz", "items": [{"name": "Marlb 1/2 Shell Oyster - Standard", "qty": 1.0, "costPerUnit": 1.68, "unit": "each"}, {"name": "Lemon Wedge (10gms unit is per KG)", "qty": 0.01, "costPerUnit": 5.0, "unit": "each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 4.0, "allergens": "Contains Crustacean, Egg", "imageUrl": "", "notes": ""}, {"id": "Half_Shell_Oyst_6", "name": "Battered Mussels - 6/Half Doz", "items": [{"name": "Marlb 1/2 Shell Oyster - Standard", "qty": 6.0, "costPerUnit": 1.68, "unit": "each"}, {"name": "Lemon Wedge (10gms unit is per KG)", "qty": 0.01, "costPerUnit": 5.0, "unit": "each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}, {"name": "BOX DINNER BIOBOARD UNLINED", "qty": 1.0, "costPerUnit": 0.3, "unit": "each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 20.0, "allergens": "Contains Crustacean, Egg", "imageUrl": "", "notes": ""}, {"id": "Crispy_Fish_Burger", "name": "Crispy Fish Burger Meal - Hoki", "items": [{"name": "Hoki Fillet", "qty": 0.1, "costPerUnit": 5.77, "unit": "kg"}, {"name": "Standard Fish Batter", "qty": 0.015, "costPerUnit": 4.0, "unit": "kg"}, {"name": "Mr Chips 10mm Golden Homestyle Fries", "qty": 0.25, "costPerUnit": 3.7, "unit": "kg"}, {"name": "LETTUCE LEAF MIX", "qty": 0.02, "costPerUnit": 25.0, "unit": "kg"}, {"name": "Tartare Sauce 1 ltr", "qty": 0.025, "costPerUnit": 10.0, "unit": "Ltr"}, {"name": "Lemon Wedge (10gms unit is per KG)", "qty": 0.01, "costPerUnit": 5.0, "unit": "each"}, {"name": "Cheese Slices Swiss (20g slice) - Bid 50320", "qty": 0.02, "costPerUnit": 21.45, "unit": "kg"}, {"name": "Pickles Sweet & Spicy Crinkle Cut - Bid105844", "qty": 0.03, "costPerUnit": 12.0, "unit": "kg"}, {"name": "Box Hot Dog Bioboard", "qty": 1.0, "costPerUnit": 0.2, "unit": "each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 16.0, "allergens": "Contains Fish, Egg, Dairy", "imageUrl": "", "notes": ""}, {"id": "Grilled_Groper_Burger", "name": "Grilled Groper Burger", "items": [{"name": "Groper Fillet Skn On", "qty": 0.13, "costPerUnit": 17.24, "unit": "kg"}, {"name": "Garlic Butter", "qty": 0.015, "costPerUnit": 20.0, "unit": "kg"}, {"name": "Avocado Fresh", "qty": 0.25, "costPerUnit": 2.0, "unit": "Each"}, {"name": "LETTUCE LEAF MIX", "qty": 0.02, "costPerUnit": 25.0, "unit": "kg"}, {"name": "Lemon Mayo", "qty": 0.025, "costPerUnit": 8.0, "unit": "Ltr"}, {"name": "Tomatoes Fresh", "qty": 0.03, "costPerUnit": 12.0, "unit": "kg"}, {"name": "BOX BURGER (BD-79186)", "qty": 1.0, "costPerUnit": 0.17, "unit": "Each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 18.5, "allergens": "Contains Fish, Egg, Dairy", "imageUrl": "", "notes": ""}, {"id": "2_Tasty_Tacos", "name": "2 Tasty Taco's (one of each)", "items": [{"name": "Tortilla 6\" Flour - Taco", "qty": 1.0, "costPerUnit": 0.55, "unit": "each"}, {"name": "Fish Bites", "qty": 0.05, "costPerUnit": 10.0, "unit": "kg"}, {"name": "Rhubarb Pico de Gallo", "qty": 0.02, "costPerUnit": 8.0, "unit": "kg"}, {"name": "Coleslaw", "qty": 0.01, "costPerUnit": 10.0, "unit": "kg"}, {"name": "Chipotle Mayo", "qty": 0.025, "costPerUnit": 10.0, "unit": "Ltr"}, {"name": "Tortilla 6\" Flour - Taco", "qty": 1.0, "costPerUnit": 0.55, "unit": "each"}, {"name": "SQUID CRISPY SPICED TEN 5X1KG", "qty": 0.05, "costPerUnit": 15.65, "unit": "kg"}, {"name": "Tomato Red Onion Pickle", "qty": 0.015, "costPerUnit": 12.0, "unit": "kg"}, {"name": "Roast Corn Salsa", "qty": 0.015, "costPerUnit": 10.0, "unit": "kg"}, {"name": "LETTUCE LEAF MIX", "qty": 0.01, "costPerUnit": 25.0, "unit": "kg"}, {"name": "Sour Cream", "qty": 0.01, "costPerUnit": 7.5, "unit": "Ltr"}, {"name": "Box Hot Dog Bioboard", "qty": 1.0, "costPerUnit": 0.2, "unit": "each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 16.5, "allergens": "Contains Fish, Egg, Dairy", "imageUrl": "", "notes": ""}, {"id": "Salmon_Pastrami_Reuben_Roll", "name": "Salmon Pastrami Reuben Roll", "items": [{"name": "Pretzel Bap 80g", "qty": 1.0, "costPerUnit": 1.4, "unit": "each"}, {"name": "Salmon Fillet - Frzn 175g portion NZKS", "qty": 0.5, "costPerUnit": 4.03, "unit": "Each"}, {"name": "Beetroot Sauerkraut", "qty": 0.03, "costPerUnit": 14.0, "unit": "kg"}, {"name": "Cheese Slices Swiss (20g slice) - Bid 50320", "qty": 0.02, "costPerUnit": 21.45, "unit": "kg"}, {"name": "Red Onion Pickle", "qty": 0.015, "costPerUnit": 6.5, "unit": "kg"}, {"name": "Sour Cream", "qty": 0.03, "costPerUnit": 7.5, "unit": "Ltr"}, {"name": "BOX BURGER (BD-79186)", "qty": 1.0, "costPerUnit": 0.17, "unit": "Each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 18.0, "allergens": "Contains Fish, Egg, Dairy", "imageUrl": "", "notes": ""}, {"id": "Grilled_Meal_Box", "name": "Grilled Meal Box", "items": [{"name": "Gurnard", "qty": 0.18, "costPerUnit": 9.0, "unit": "kg"}, {"name": "Fresh Mussels (Meat) Med", "qty": 0, "costPerUnit": 0.5, "unit": "each"}, {"name": "PR CUT GREEN WT 21/25 10X1KG SCU (20g each)", "qty": 0, "costPerUnit": 16.0, "unit": "kg"}, {"name": "SCALLOP CH 21/30 10X1KG", "qty": 0, "costPerUnit": 28.9, "unit": "kg"}, {"name": "LETTUCE LEAF MIX", "qty": 0.02, "costPerUnit": 25.0, "unit": "kg"}, {"name": "Tartare Sauce", "qty": 0.015, "costPerUnit": 11.0, "unit": "Ltr"}, {"name": "Potato Salad", "qty": 0.1, "costPerUnit": 9.0, "unit": "kg"}, {"name": "Potato Salad Dressing", "qty": 0.02, "costPerUnit": 5.0, "unit": "Ltr"}, {"name": "McClures Pickle/Gherkin 20kg pail yeilds approx\n525 units (20g each) @ $165 pail = .31c each", "qty": 1.0, "costPerUnit": 0.31, "unit": "each"}, {"name": "BOX DINNER BIOBOARD UNLINED", "qty": 1.0, "costPerUnit": 0.3, "unit": "each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}, {"name": "FORKS WOOD 16CM BIRCH", "qty": 1.0, "costPerUnit": 0.03, "unit": "each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 18.5, "allergens": "Contains Fish, Egg, Dairy", "imageUrl": "", "notes": ""}, {"id": "Half_Crayfish_n_Chips", "name": "Grilled Meal Box", "items": [{"name": "Crayfish (Cooked) A Grade - 1/2 Portion", "qty": 1.0, "costPerUnit": 25.0, "unit": "Each"}, {"name": "Mr Chips 10mm Golden Homestyle Fries", "qty": 0.2, "costPerUnit": 3.7, "unit": "kg"}, {"name": "Lemon Wedge (10gms unit is per KG)", "qty": 0.3, "costPerUnit": 5.0, "unit": "each"}, {"name": "Garlic Butter", "qty": 0.05, "costPerUnit": 20.0, "unit": "kg"}, {"name": "BOX DINNER BIOBOARD UNLINED", "qty": 1.0, "costPerUnit": 0.3, "unit": "each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}, {"name": "FORKS WOOD 16CM BIRCH", "qty": 1.0, "costPerUnit": 0.03, "unit": "each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 55.0, "allergens": "Contains Fish, Egg, Dairy", "imageUrl": "", "notes": ""}, {"id": "Salmon_Pastrami_Roll_v2", "name": "Salmon Pastrami Reuban Roll", "items": [{"name": "Pretzel Bap 80g", "qty": 1.0, "costPerUnit": 1.4, "unit": "each"}, {"name": "Salmon Fillet - Frzn 175g portion NZKS", "qty": 0.5, "costPerUnit": 4.03, "unit": "Each"}, {"name": "Beetroot Sauerkraut", "qty": 0.03, "costPerUnit": 14.0, "unit": "kg"}, {"name": "Cheese Slices Swiss (20g slice) - Bid 50320", "qty": 0.02, "costPerUnit": 21.45, "unit": "kg"}, {"name": "Red Onion Pickle", "qty": 0.015, "costPerUnit": 6.5, "unit": "kg"}, {"name": "Sour Cream", "qty": 0.03, "costPerUnit": 7.5, "unit": "Ltr"}, {"name": "Gherkin - Long Cut Slice", "qty": 0.015, "costPerUnit": 6.5, "unit": "KG"}, {"name": "BOX BURGER (BD-79186)", "qty": 1.0, "costPerUnit": 0.17, "unit": "Each"}, {"name": "SERV LUN 1PL 4FLD NATURAL", "qty": 1.0, "costPerUnit": 0.02, "unit": "Each"}], "portions": 1, "wastage": 0, "gst": 0.15, "retail": 16.0, "allergens": "Contains Fish, Egg, Dairy", "imageUrl": "", "notes": ""}];
 
-function loadData() {
-  try {
-    const ri = localStorage.getItem('lfc_ingredients');
-    const rr = localStorage.getItem('lfc_recipes');
+// Allergen normalisation map
+const ALLERGEN_MAP = {
+  'fish':'Fish','fish ':'Fish','fish, gluten':'Fish, Gluten',
+  'dairy':'Dairy','egg':'Egg','gluten':'Gluten','gluten ':'Gluten',
+  'crustacean':'Crustacean','crustacean\u00a0':'Crustacean',
+  'mollusc':'Mollusc','soy':'Soy','sesame':'Sesame',
+  'wheat':'Wheat'
+};
+
+function normaliseAllergen(s){ return ALLERGEN_MAP[s.trim().toLowerCase()] || s.trim(); }
+
+function loadData(){
+  try{
+    const ri=localStorage.getItem('lfc_ing'), rr=localStorage.getItem('lfc_rec');
     return {
-      ingredients: ri ? JSON.parse(ri) : JSON.parse(JSON.stringify(BASE_INGREDIENTS)),
-      recipes:     rr ? JSON.parse(rr) : JSON.parse(JSON.stringify(BASE_RECIPES))
+      ing: ri ? JSON.parse(ri) : JSON.parse(JSON.stringify(BASE_ING)),
+      rec: rr ? JSON.parse(rr) : JSON.parse(JSON.stringify(BASE_REC))
     };
-  } catch { return { ingredients: JSON.parse(JSON.stringify(BASE_INGREDIENTS)), recipes: JSON.parse(JSON.stringify(BASE_RECIPES)) }; }
+  }catch{ return {ing:JSON.parse(JSON.stringify(BASE_ING)), rec:JSON.parse(JSON.stringify(BASE_REC))}; }
+}
+function save(){
+  localStorage.setItem('lfc_ing', JSON.stringify(S.ing));
+  localStorage.setItem('lfc_rec', JSON.stringify(S.rec));
 }
 
-function saveData() {
-  localStorage.setItem('lfc_ingredients', JSON.stringify(state.ingredients));
-  localStorage.setItem('lfc_recipes',     JSON.stringify(state.recipes));
+let S = loadData();
+let curId = null;
+
+// ══ CALC ══════════════════════════════════════════════════════════════════════
+function calc(r){
+  const raw = r.items.reduce((s,it)=>s+(it.qty*it.costPerUnit),0);
+  const waste = raw*r.wastage;
+  const sub = raw+waste;
+  const gstAmt = sub*r.gst;
+  const total = sub+gstAmt;
+  const por = r.portions>0 ? sub/r.portions : 0;
+  const porGst = r.portions>0 ? total/r.portions : 0;
+  const fcp = r.retail>0 ? porGst/r.retail : 0;
+  return {raw,waste,sub,gstAmt,total,por,porGst,fcp};
 }
 
-let state = loadData();
-let currentRecipeId = null;
-let view = 'recipe'; // 'recipe' | 'ingredients'
-
-// ── CALCS ─────────────────────────────────────────────────────────────────────
-function calcRecipe(recipe) {
-  const recipeRaw = recipe.items.reduce((s, it) => s + (it.qty * it.costPerUnit), 0);
-  const wastageAmt = recipeRaw * recipe.wastage;
-  const subTotal   = recipeRaw + wastageAmt;
-  const gstAmt     = subTotal * recipe.gst;
-  const totalIncGst = subTotal + gstAmt;
-  const portionCost = recipe.portions > 0 ? subTotal / recipe.portions : 0;
-  const portionCostGst = recipe.portions > 0 ? totalIncGst / recipe.portions : 0;
-  const foodCostPct = recipe.retail > 0 ? portionCostGst / recipe.retail : 0;
-  return { recipeRaw, wastageAmt, subTotal, gstAmt, totalIncGst, portionCost, portionCostGst, foodCostPct };
+// Auto-derive allergens from ingredient list
+function deriveAllergens(items){
+  const set = new Set();
+  items.forEach(it=>{
+    const ing = S.ing.find(i=>i.name===it.name);
+    if(ing && ing.allergen){
+      ing.allergen.split(',').forEach(a=>{
+        const n=normaliseAllergen(a);
+        if(n) set.add(n);
+      });
+    }
+  });
+  return Array.from(set).sort().join(', ');
 }
 
-// ── SIDEBAR ───────────────────────────────────────────────────────────────────
-function renderSidebar() {
-  const el = document.getElementById('recipe-list');
-  el.innerHTML = '';
-  state.recipes.forEach(r => {
-    const c = calcRecipe(r);
-    const div = document.createElement('div');
-    div.className = 'recipe-item' + (r.id === currentRecipeId ? ' active' : '');
-    div.innerHTML = `<div class="recipe-item-name">${r.name}</div>
-      <div class="recipe-item-cost">Portion: ${c.portionCostGst.toFixed(2)} incl. GST &nbsp;|&nbsp; Retail: ${r.retail.toFixed(2)}</div>`;
-    div.onclick = () => openRecipe(r.id);
+// ══ SIDEBAR ══════════════════════════════════════════════════════════════════
+function renderSidebar(){
+  const el=document.getElementById('sb-list');
+  el.innerHTML='';
+  S.rec.forEach(r=>{
+    const c=calc(r);
+    const div=document.createElement('div');
+    div.className='sb-item'+(r.id===curId?' active':'');
+    div.innerHTML=`<div class="sb-item-name">${r.name}</div>
+      <div class="sb-item-meta">Portion $${c.porGst.toFixed(2)} incl. GST &nbsp;·&nbsp; Retail $${r.retail.toFixed(2)}</div>`;
+    div.onclick=()=>openRecipe(r.id);
     el.appendChild(div);
   });
 }
 
-// ── OPEN RECIPE ───────────────────────────────────────────────────────────────
-function openRecipe(id) {
-  currentRecipeId = id;
-  view = 'recipe';
+// ══ OPEN RECIPE ═══════════════════════════════════════════════════════════════
+function openRecipe(id){
+  curId=id;
   renderSidebar();
-  const recipe = state.recipes.find(r => r.id === id);
-  if (!recipe) return;
-  document.getElementById('topbar-title').textContent = recipe.name;
-  document.getElementById('topbar-actions').innerHTML = `
-    <button class="btn btn-secondary print-hide" onclick="showIngredients()">⚙ Ingredients</button>
-    <button class="btn btn-danger print-hide" onclick="deleteRecipe('${id}')">Delete</button>
-    <button class="btn btn-print" onclick="window.print()">🖨 Print</button>`;
-  renderRecipeView(recipe);
+  const r=S.rec.find(x=>x.id===id);
+  if(!r) return;
+  document.getElementById('topbar-title').textContent=r.name;
+  document.getElementById('topbar-actions').innerHTML=`
+    <button class="btn btn-ghost" onclick="showIngredients()">⚙ Ingredients</button>
+    <button class="btn btn-danger" onclick="deleteRecipe('${id}')">Delete</button>
+    <button class="btn btn-print" onclick="doPrint()">🖨 Print</button>`;
+  renderEditor(r);
 }
 
-function renderRecipeView(recipe) {
-  const c = calcRecipe(recipe);
-  const ingOptions = state.ingredients.map(i =>
-    `<option value="${i.name}">${i.name} (${i.unit}, ${i.cost.toFixed(2)})</option>`).join('');
-
-  const ingRows = recipe.items.map((it, idx) => `
+function renderEditor(r){
+  const c=calc(r);
+  const ingOpts=S.ing.map(i=>`<option value="${esc(i.name)}">${esc(i.name)} (${i.unit}${i.cost?', $'+i.cost.toFixed(2):''})</option>`).join('');
+  const ingRows=r.items.map((it,idx)=>`
     <tr>
-      <td>
-        <select onchange="updateIngredient(${idx}, 'name', this.value)">
-          <option value="${it.name}">${it.name}</option>
-          ${state.ingredients.filter(i=>i.name!==it.name).map(i=>`<option value="${i.name}">${i.name}</option>`).join('')}
-        </select>
-      </td>
-      <td><input type="number" value="${it.qty}" step="0.001" min="0" onchange="updateIngredient(${idx},'qty',+this.value)"/></td>
-      <td>${it.unit}</td>
-      <td><input type="number" value="${it.costPerUnit}" step="0.01" min="0" onchange="updateIngredient(${idx},'costPerUnit',+this.value)"/></td>
-      <td class="ing-cost">$${(it.qty*it.costPerUnit).toFixed(3)}</td>
-      <td><button class="btn-rm" onclick="removeIngredient(${idx})">×</button></td>
+      <td><select onchange="updIng(${idx},'name',this.value)">
+        <option value="${esc(it.name)}">${esc(it.name)}</option>
+        ${S.ing.filter(i=>i.name!==it.name).map(i=>`<option value="${esc(i.name)}">${esc(i.name)}</option>`).join('')}
+      </select></td>
+      <td><input type="number" value="${it.qty}" step="0.001" min="0" onchange="updIng(${idx},'qty',+this.value)" style="max-width:70px"/></td>
+      <td style="color:var(--mid);font-size:.78rem">${it.unit}</td>
+      <td><input type="number" value="${it.costPerUnit}" step="0.01" min="0" onchange="updIng(${idx},'costPerUnit',+this.value)" style="max-width:70px"/></td>
+      <td class="td-cost">$${(it.qty*it.costPerUnit).toFixed(3)}</td>
+      <td><button class="btn-rm" onclick="rmIng(${idx})">×</button></td>
     </tr>`).join('');
 
-  const fcp = c.foodCostPct;
-  const fcClass = fcp < 0.28 ? 'good' : fcp < 0.35 ? 'warn' : 'bad';
-  const allergens = recipe.allergens.split(',').map(a=>a.trim()).filter(Boolean);
+  const fcpClass=c.fcp<0.28?'good':c.fcp<0.35?'warn':'bad';
+  const allergenStr=deriveAllergens(r.items);
+  if(allergenStr && allergenStr!==r.allergens){ r.allergens=allergenStr; save(); }
 
-  document.getElementById('content').innerHTML = `
-    <div class="print-header">
-      <img src="${LOGO}" alt="Little Fish Co"/>
+  const allergenBadges=r.allergens.split(',').map(a=>a.trim()).filter(Boolean)
+    .map(a=>`<span class="ab ${allergenClass(a)}">${a}</span>`).join('');
+
+  // GST as percentage for display
+  const gstPct=Math.round(r.gst*100);
+
+  document.getElementById('content').innerHTML=`
+    ${buildPrintSheet(r,c,allergenStr)}
+    <div class="recipe-grid" id="editor-wrap">
+      <!-- LEFT -->
       <div>
-        <h1>${recipe.name}</h1>
-        <p style="color:#5a6272;font-size:.85rem">Recipe Costing Sheet</p>
-      </div>
-    </div>
-    <div style="display:flex;gap:.5rem;align-items:center;margin-bottom:1rem" class="print-hide">
-      <label style="font-size:.82rem;color:var(--mid)">Recipe name:</label>
-      <input style="flex:1;border:1.5px solid var(--faint);border-radius:5px;padding:.35rem .6rem;font-family:'Source Sans 3',sans-serif;font-size:.9rem;font-weight:600;outline:none" 
-        value="${recipe.name}" oninput="updateMeta('name',this.value)" onchange="renderSidebar()"/>
-    </div>
-    <div class="recipe-grid">
-      <!-- LEFT COLUMN -->
-      <div>
-        <!-- Image card -->
-        <div class="card" style="margin-bottom:1rem">
-          <div class="recipe-image-wrap" id="img-wrap">
-            ${recipe.imageUrl
-              ? `<img src="${recipe.imageUrl}" alt="${recipe.name}" onerror="this.parentElement.innerHTML='<div class=recipe-image-placeholder><svg width=48 height=48 viewBox=0 0 24 24 fill=none stroke=currentColor stroke-width=1.5><rect x=3 y=3 width=18 height=18 rx=2/><circle cx=8.5 cy=8.5 r=1.5/><path d=m21 15-5-5L5 21/></svg><p>Image not found</p></div>'"/>`
-              : `<div class="recipe-image-placeholder"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><p>No image — add a URL below</p></div>`
-            }
+        <div class="card">
+          <div class="recipe-name-row">
+            <label>Recipe</label>
+            <input value="${esc(r.name)}" oninput="updMeta('name',this.value)" onchange="renderSidebar()"/>
           </div>
-          <div class="img-url-row print-hide">
-            <input type="url" id="img-url-input" placeholder="Paste image URL here…" value="${recipe.imageUrl || ''}" oninput="updateMeta('imageUrl',this.value)"/>
-            <button class="btn btn-secondary" onclick="applyImageUrl()">Apply</button>
+          <div class="img-frame" id="img-frame">
+            ${r.imageUrl?`<img src="${esc(r.imageUrl)}" alt="${esc(r.name)}" onerror="this.outerHTML='<div class=img-placeholder><svg width=40 height=40 viewBox=&quot;0 0 24 24&quot; fill=none stroke=currentColor stroke-width=1.5><rect x=3 y=3 width=18 height=18 rx=2/><circle cx=8.5 cy=8.5 r=1.5/><path d=&quot;m21 15-5-5L5 21&quot;/></svg><p>Image failed to load</p></div>'"/>`:
+            `<div class="img-placeholder"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><p>Add an image URL below</p></div>`}
+          </div>
+          <div class="img-url-row">
+            <input type="url" id="img-input" placeholder="Paste image URL…" value="${esc(r.imageUrl||'')}"/>
+            <button class="btn btn-ocean" onclick="applyImg()">Apply</button>
           </div>
         </div>
 
-        <!-- Ingredients card -->
         <div class="card">
-          <div class="card-header">
-            <h3>Ingredients</h3>
-            <span style="font-size:.8rem;color:var(--mid)">Recipe cost: <strong>$${c.recipeRaw.toFixed(2)}</strong></span>
-          </div>
-          <table>
-            <thead><tr><th>Ingredient</th><th>Qty</th><th>Unit</th><th>$/Unit</th><th>Cost</th><th class="print-hide"></th></tr></thead>
-            <tbody id="ing-tbody">${ingRows}</tbody>
+          <div class="ch"><h3>Ingredients</h3><span>Recipe cost: <strong>$${c.raw.toFixed(2)}</strong></span></div>
+          <table class="ing-table">
+            <thead><tr><th>Ingredient</th><th>Qty</th><th>Unit</th><th>$/Unit</th><th>Cost</th><th></th></tr></thead>
+            <tbody id="ing-body">${ingRows}</tbody>
           </table>
-          <div class="add-ing-row print-hide">
-            <select id="add-ing-select">
-              <option value="">— Select ingredient —</option>
-              ${ingOptions}
-            </select>
-            <input type="number" id="add-ing-qty" placeholder="Qty" step="0.001" min="0" style="max-width:90px"/>
-            <button class="btn btn-primary" onclick="addIngredient()" style="white-space:nowrap">+ Add</button>
+          <div class="add-row">
+            <select id="add-sel"><option value="">— Add ingredient —</option>${ingOpts}</select>
+            <input type="number" id="add-qty" placeholder="Qty" step="0.001" min="0"/>
+            <button class="btn btn-ocean" onclick="addIng()">Add</button>
           </div>
         </div>
 
-        <!-- Notes -->
-        <div class="card" style="margin-top:1rem">
-          <div class="card-header"><h3>Notes</h3></div>
-          <div class="card-body">
-            <textarea style="width:100%;border:1.5px solid var(--faint);border-radius:5px;padding:.5rem;font-family:'Source Sans 3',sans-serif;font-size:.85rem;outline:none;resize:vertical;min-height:80px" 
-              placeholder="Method, tips, storage notes…" oninput="updateMeta('notes',this.value)">${recipe.notes||''}</textarea>
+        <div class="card">
+          <div class="ch"><h3>Notes / Method</h3></div>
+          <div class="cb">
+            <textarea class="notes-ta" placeholder="Method, storage, presentation notes…" oninput="updMeta('notes',this.value)">${esc(r.notes||'')}</textarea>
           </div>
         </div>
       </div>
 
-      <!-- RIGHT COLUMN -->
+      <!-- RIGHT -->
       <div>
-        <div class="card" style="margin-bottom:1rem">
-          <div class="card-header"><h3>Recipe Summary</h3></div>
-          <div class="card-body">
-            <div class="summary-grid">
-              <div class="summary-row">
-                <span class="summary-label">Portions</span>
-                <input class="summary-input" type="number" min="1" value="${recipe.portions}" onchange="updateMeta('portions',+this.value)"/>
-              </div>
-              <div class="summary-row">
-                <span class="summary-label">Wastage %</span>
-                <input class="summary-input" type="number" min="0" max="1" step="0.01" value="${recipe.wastage}" onchange="updateMeta('wastage',+this.value)"/>
-              </div>
-              <div class="summary-row">
-                <span class="summary-label">GST</span>
-                <input class="summary-input" type="number" value="${recipe.gst}" step="0.01" onchange="updateMeta('gst',+this.value)"/>
-              </div>
-              <div class="summary-row">
-                <span class="summary-label">Recipe cost</span>
-                <span class="summary-value">$${c.recipeRaw.toFixed(2)}</span>
-              </div>
-              <div class="summary-row">
-                <span class="summary-label">Wastage cost</span>
-                <span class="summary-value">$${c.wastageAmt.toFixed(2)}</span>
-              </div>
-              <div class="summary-row">
-                <span class="summary-label">Sub total</span>
-                <span class="summary-value">$${c.subTotal.toFixed(2)}</span>
-              </div>
-              <div class="summary-row">
-                <span class="summary-label">GST cost</span>
-                <span class="summary-value">$${c.gstAmt.toFixed(2)}</span>
-              </div>
-              <div class="summary-row">
-                <span class="summary-label">Portion cost excl.</span>
-                <span class="summary-value highlight">$${c.portionCost.toFixed(2)}</span>
-              </div>
-              <div class="summary-row">
-                <span class="summary-label">Portion cost incl. GST</span>
-                <span class="summary-value highlight">$${c.portionCostGst.toFixed(2)}</span>
-              </div>
-              <div class="summary-row" style="border-bottom:2px solid var(--navy);padding-bottom:.75rem;margin-bottom:.25rem">
-                <span class="summary-label"><strong>Retail price</strong></span>
-                <span style="display:flex;align-items:center;gap:.25rem">
-                  <span style="font-weight:600">$</span>
-                  <input class="summary-input" type="number" min="0" step="0.50" value="${recipe.retail}" onchange="updateMeta('retail',+this.value)"/>
-                </span>
-              </div>
-              <div class="summary-row">
-                <span class="summary-label">Food cost %</span>
-                <span class="summary-value ${fcClass}">${(fcp*100).toFixed(1)}%</span>
-              </div>
+        <div class="card">
+          <div class="ch"><h3>Costing Summary</h3></div>
+          <div class="cb">
+            <div class="sum-row"><span class="sum-lbl">Portions</span><input class="sum-input" type="number" min="1" value="${r.portions}" onchange="updMeta('portions',+this.value)"/></div>
+            <div class="sum-row">
+              <span class="sum-lbl">Wastage</span>
+              <span style="display:flex;align-items:center;gap:3px">
+                <input class="sum-input" type="number" min="0" max="100" step="1" value="${Math.round(r.wastage*100)}" onchange="updMeta('wastage',+this.value/100)" style="width:55px"/>
+                <span style="font-size:.78rem;color:var(--mid)">%</span>
+              </span>
+            </div>
+            <div class="sum-row">
+              <span class="sum-lbl">GST</span>
+              <span style="display:flex;align-items:center;gap:3px">
+                <input class="sum-input" type="number" min="0" max="100" step="1" value="${gstPct}" onchange="updMeta('gst',+this.value/100)" style="width:55px"/>
+                <span style="font-size:.78rem;color:var(--mid)">%</span>
+              </span>
+            </div>
+            <hr class="sum-divider"/>
+            <div class="sum-row"><span class="sum-lbl">Recipe cost</span><span class="sum-val">$${c.raw.toFixed(2)}</span></div>
+            <div class="sum-row"><span class="sum-lbl">Wastage cost</span><span class="sum-val">$${c.waste.toFixed(2)}</span></div>
+            <div class="sum-row"><span class="sum-lbl">Sub total</span><span class="sum-val">$${c.sub.toFixed(2)}</span></div>
+            <div class="sum-row"><span class="sum-lbl">GST (${gstPct}%)</span><span class="sum-val">$${c.gstAmt.toFixed(2)}</span></div>
+            <hr class="sum-divider"/>
+            <div class="sum-row"><span class="sum-lbl">Portion cost excl. GST</span><span class="sum-val hl">$${c.por.toFixed(2)}</span></div>
+            <div class="sum-row"><span class="sum-lbl">Portion cost incl. GST</span><span class="sum-val hl">$${c.porGst.toFixed(2)}</span></div>
+            <hr class="sum-divider"/>
+            <div class="sum-row" style="padding:.5rem 0">
+              <span class="sum-lbl" style="font-weight:700;color:var(--ink)">Retail Price</span>
+              <span style="display:flex;align-items:center;gap:3px">
+                <span style="font-weight:700">$</span>
+                <input class="sum-input" type="number" min="0" step="0.50" value="${r.retail}" onchange="updMeta('retail',+this.value)" style="width:70px"/>
+              </span>
+            </div>
+            <div class="sum-row">
+              <span class="sum-lbl">Food cost %</span>
+              <span class="sum-val ${fcpClass}">${(c.fcp*100).toFixed(1)}%</span>
             </div>
           </div>
         </div>
 
         <div class="card">
-          <div class="card-header"><h3>Allergens &amp; Dietary</h3></div>
-          <div class="card-body">
-            <div style="margin-bottom:.75rem">
-              ${allergens.length ? allergens.map(a=>`<span class="allergen-badge">${a}</span>`).join('') : '<span style="color:var(--mid);font-size:.82rem">None listed</span>'}
+          <div class="ch"><h3>Allergens</h3></div>
+          <div class="cb">
+            <div style="font-size:.75rem;color:var(--mid);margin-bottom:.5rem">Auto-detected from ingredients:</div>
+            <div class="allergen-list" id="allergen-display">
+              ${allergenBadges||'<span style="color:var(--light);font-size:.78rem">None detected</span>'}
             </div>
-            <div class="meta-row print-hide">
-              <label>Allergens</label>
-              <input placeholder="e.g. Contains Fish, Gluten" value="${recipe.allergens}" oninput="updateMeta('allergens',this.value)"/>
+            <div style="margin-top:.75rem">
+              <label style="font-size:.72rem;color:var(--light);display:block;margin-bottom:.3rem">Override / add notes:</label>
+              <input style="width:100%;border:1.5px solid var(--faint);border-radius:4px;padding:.35rem .5rem;font-size:.8rem;font-family:'Barlow',sans-serif;outline:none" 
+                value="${esc(r.allergens)}" oninput="updMeta('allergens',this.value)" placeholder="e.g. Contains Fish, Gluten"/>
             </div>
           </div>
         </div>
@@ -424,132 +510,207 @@ function renderRecipeView(recipe) {
     </div>`;
 }
 
-// ── MUTATIONS ─────────────────────────────────────────────────────────────────
-function updateIngredient(idx, field, value) {
-  const recipe = state.recipes.find(r => r.id === currentRecipeId);
-  if (!recipe) return;
-  if (field === 'name') {
-    const ing = state.ingredients.find(i => i.name === value);
-    recipe.items[idx].name = value;
-    if (ing) { recipe.items[idx].costPerUnit = ing.cost; recipe.items[idx].unit = ing.unit; }
-  } else {
-    recipe.items[idx][field] = value;
-  }
-  saveData();
-  renderRecipeView(recipe);
-}
+// ══ PRINT SHEET ══════════════════════════════════════════════════════════════
+function buildPrintSheet(r,c,allergenStr){
+  const fcpClass=c.fcp<0.28?'good':c.fcp<0.35?'warn':'bad';
+  const fcpLabel=(c.fcp*100).toFixed(1)+'% food cost';
+  const gstPct=Math.round(r.gst*100);
+  const allergens=(allergenStr||r.allergens||'').split(',').map(a=>a.trim()).filter(Boolean);
+  const date=new Date().toLocaleDateString('en-NZ',{day:'numeric',month:'long',year:'numeric'});
 
-function removeIngredient(idx) {
-  const recipe = state.recipes.find(r => r.id === currentRecipeId);
-  recipe.items.splice(idx, 1);
-  saveData();
-  renderRecipeView(recipe);
-}
-
-function addIngredient() {
-  const sel = document.getElementById('add-ing-select');
-  const qtyEl = document.getElementById('add-ing-qty');
-  const name = sel.value;
-  const qty = parseFloat(qtyEl.value) || 0;
-  if (!name) return;
-  const recipe = state.recipes.find(r => r.id === currentRecipeId);
-  const ing = state.ingredients.find(i => i.name === name);
-  recipe.items.push({ name, qty, costPerUnit: ing ? ing.cost : 0, unit: ing ? ing.unit : '' });
-  saveData();
-  sel.value = '';
-  qtyEl.value = '';
-  renderRecipeView(recipe);
-}
-
-function updateMeta(field, value) {
-  const recipe = state.recipes.find(r => r.id === currentRecipeId);
-  if (!recipe) return;
-  recipe[field] = value;
-  saveData();
-  // Re-render summary only for numeric fields
-  if (['portions','wastage','gst','retail'].includes(field)) {
-    renderRecipeView(recipe);
-  }
-}
-
-function applyImageUrl() {
-  const url = document.getElementById('img-url-input').value.trim();
-  updateMeta('imageUrl', url);
-  renderRecipeView(state.recipes.find(r => r.id === currentRecipeId));
-}
-
-function deleteRecipe(id) {
-  if (!confirm('Delete this recipe?')) return;
-  state.recipes = state.recipes.filter(r => r.id !== id);
-  saveData();
-  currentRecipeId = null;
-  document.getElementById('topbar-title').textContent = 'Little Fish Co';
-  document.getElementById('topbar-actions').innerHTML = '';
-  document.getElementById('content').innerHTML = `<div class="welcome"><img src="${LOGO}" alt="Logo"/><h2>Recipe Costing Tool</h2><p>Select a recipe or create a new one.</p></div>`;
-  renderSidebar();
-}
-
-function newRecipe() {
-  const id = 'recipe_' + Date.now();
-  const recipe = { id, name: 'New Recipe', items: [], portions: 1, wastage: 0, gst: 0.15, retail: 0, allergens: '', imageUrl: '', notes: '' };
-  state.recipes.push(recipe);
-  saveData();
-  renderSidebar();
-  openRecipe(id);
-}
-
-// ── INGREDIENTS MANAGEMENT ────────────────────────────────────────────────────
-function showIngredients() {
-  currentRecipeId = null;
-  view = 'ingredients';
-  renderSidebar();
-  document.getElementById('topbar-title').textContent = 'Ingredients List';
-  document.getElementById('topbar-actions').innerHTML = `
-    <button class="btn btn-primary" onclick="addNewIngredient()">+ Add Ingredient</button>`;
-
-  const rows = state.ingredients.map((ing, idx) => `
+  const ingRows=r.items.map(it=>`
     <tr>
-      <td><input value="${ing.name}" onchange="updateIng(${idx},'name',this.value)"/></td>
-      <td><input value="${ing.unit}" onchange="updateIng(${idx},'unit',this.value)"/></td>
-      <td><input type="number" value="${ing.cost}" step="0.01" onchange="updateIng(${idx},'cost',+this.value)"/></td>
-      <td><input value="${ing.allergen}" onchange="updateIng(${idx},'allergen',this.value)"/></td>
-      <td><input value="${ing.dietary}" onchange="updateIng(${idx},'dietary',this.value)"/></td>
-      <td><button class="btn-rm" onclick="removeIng(${idx})">×</button></td>
+      <td>${esc(it.name)}</td>
+      <td class="td-qty">${it.qty} ${it.unit}</td>
+      <td class="td-cost">$${(it.qty*it.costPerUnit).toFixed(3)}</td>
     </tr>`).join('');
 
-  document.getElementById('content').innerHTML = `
-    <div class="card ing-mgmt">
-      <div class="card-header"><h3>All Ingredients (${state.ingredients.length})</h3></div>
+  const imgBlock=r.imageUrl
+    ?`<img src="${esc(r.imageUrl)}" alt="${esc(r.name)}" style="width:100%;height:100%;object-fit:cover;display:block"/>`
+    :`<span class="ps-image-none">No image</span>`;
+
+  return `<div class="print-sheet" id="print-sheet">
+    <!-- Header -->
+    <div class="ps-header">
+      <div class="ps-logo"><img src="${LOGO}" alt="Little Fish Co" style="filter:none"/></div>
+      <div class="ps-title-block">
+        <div class="ps-company">Little Fish Co — Recipe Costing Sheet</div>
+        <div class="ps-recipe-name">${esc(r.name)}</div>
+        <div class="ps-meta-pills">
+          <span class="ps-pill">${r.portions} portion${r.portions!==1?'s':''}</span>
+          <span class="ps-pill">GST ${gstPct}%</span>
+          ${r.wastage>0?`<span class="ps-pill">Wastage ${Math.round(r.wastage*100)}%</span>`:''}
+          <span class="ps-pill retail">Retail $${r.retail.toFixed(2)}</span>
+          <span class="ps-pill fcp ${fcpClass}">${fcpLabel}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Image -->
+    <div class="ps-image">${imgBlock}</div>
+
+    <!-- Body -->
+    <div class="ps-body">
+      <!-- Left: ingredients + notes -->
+      <div class="ps-left">
+        <div class="ps-section-title">Ingredients</div>
+        <table class="ps-ing-table">
+          <thead><tr><th>Ingredient</th><th>Quantity</th><th>Cost</th></tr></thead>
+          <tbody>${ingRows}</tbody>
+        </table>
+
+        ${allergens.length?`
+        <div style="margin-top:7pt">
+          <div class="ps-section-title">Allergens</div>
+          <div class="ps-allergen-list">
+            ${allergens.map(a=>`<span class="ps-ab">${esc(a)}</span>`).join('')}
+          </div>
+        </div>`:''}
+
+        ${r.notes?`
+        <div style="margin-top:7pt">
+          <div class="ps-section-title">Notes</div>
+          <div class="ps-notes">${esc(r.notes)}</div>
+        </div>`:''}
+      </div>
+
+      <!-- Right: cost summary -->
+      <div class="ps-right">
+        <div class="ps-section-title">Cost Summary</div>
+        <div class="ps-sum">
+          <div class="ps-sum-row"><span class="l">Recipe cost</span><span class="v">$${c.raw.toFixed(2)}</span></div>
+          <div class="ps-sum-row"><span class="l">Wastage (${Math.round(r.wastage*100)}%)</span><span class="v">$${c.waste.toFixed(2)}</span></div>
+          <div class="ps-sum-row"><span class="l">Sub total</span><span class="v">$${c.sub.toFixed(2)}</span></div>
+          <div class="ps-sum-row"><span class="l">GST (${gstPct}%)</span><span class="v">$${c.gstAmt.toFixed(2)}</span></div>
+          <div class="ps-sum-row total-row"><span class="l">Portion cost (excl. GST)</span><span class="v">$${c.por.toFixed(2)}</span></div>
+          <div class="ps-sum-row total-row"><span class="l">Portion cost (incl. GST)</span><span class="v">$${c.porGst.toFixed(2)}</span></div>
+          <div class="ps-sum-row retail-row" style="margin-top:4pt"><span class="l" style="font-weight:700">Retail Price</span><span class="v" style="color:#1a5fa8;font-size:11pt">$${r.retail.toFixed(2)}</span></div>
+          <div class="ps-sum-row"><span class="l">Food cost %</span><span class="v" style="color:${c.fcp<0.28?'#1e6e44':c.fcp<0.35?'#b87010':'#b02828'}">${(c.fcp*100).toFixed(1)}%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="ps-footer">
+      <span class="ps-footer-brand">Little Fish Co · Recipe Costing</span>
+      <span class="ps-footer-date">Printed ${date}</span>
+    </div>
+  </div>`;
+}
+
+function doPrint(){
+  // Rebuild print sheet with fresh data before printing
+  const r=S.rec.find(x=>x.id===curId);
+  if(!r) return;
+  const c=calc(r);
+  const allergenStr=deriveAllergens(r.items);
+  const ps=document.getElementById('print-sheet');
+  if(ps) ps.outerHTML=buildPrintSheet(r,c,allergenStr);
+  window.print();
+}
+
+// ══ MUTATIONS ════════════════════════════════════════════════════════════════
+function updIng(idx,field,value){
+  const r=S.rec.find(x=>x.id===curId); if(!r) return;
+  if(field==='name'){
+    const ing=S.ing.find(i=>i.name===value);
+    r.items[idx].name=value;
+    if(ing){r.items[idx].costPerUnit=ing.cost; r.items[idx].unit=ing.unit;}
+  } else { r.items[idx][field]=value; }
+  // Auto-update allergens
+  r.allergens=deriveAllergens(r.items);
+  save(); renderEditor(r);
+}
+
+function rmIng(idx){
+  const r=S.rec.find(x=>x.id===curId); if(!r) return;
+  r.items.splice(idx,1);
+  r.allergens=deriveAllergens(r.items);
+  save(); renderEditor(r);
+}
+
+function addIng(){
+  const sel=document.getElementById('add-sel');
+  const qty=parseFloat(document.getElementById('add-qty').value)||0;
+  if(!sel.value) return;
+  const r=S.rec.find(x=>x.id===curId); if(!r) return;
+  const ing=S.ing.find(i=>i.name===sel.value);
+  r.items.push({name:sel.value, qty, costPerUnit:ing?ing.cost:0, unit:ing?ing.unit:''});
+  r.allergens=deriveAllergens(r.items);
+  save(); sel.value=''; document.getElementById('add-qty').value='';
+  renderEditor(r);
+}
+
+function updMeta(field,value){
+  const r=S.rec.find(x=>x.id===curId); if(!r) return;
+  r[field]=value;
+  save();
+  if(['portions','wastage','gst','retail'].includes(field)) renderEditor(r);
+  if(field==='name') document.getElementById('topbar-title').textContent=value;
+}
+
+function applyImg(){
+  const url=document.getElementById('img-input').value.trim();
+  updMeta('imageUrl',url);
+  renderEditor(S.rec.find(x=>x.id===curId));
+}
+
+function deleteRecipe(id){
+  if(!confirm('Delete this recipe?')) return;
+  S.rec=S.rec.filter(r=>r.id!==id);
+  save(); curId=null;
+  document.getElementById('topbar-title').textContent='Little Fish Co';
+  document.getElementById('topbar-actions').innerHTML='';
+  document.getElementById('content').innerHTML=`<div class="welcome"><img src="${LOGO}" alt="Logo" style="filter:opacity(.4)"/><h2>Recipe Costing</h2><p>Select a recipe or create a new one.</p></div>`;
+  renderSidebar();
+}
+
+function newRecipe(){
+  const id='rec_'+Date.now();
+  S.rec.push({id,name:'New Recipe',items:[],portions:1,wastage:0,gst:0.15,retail:0,allergens:'',imageUrl:'',notes:''});
+  save(); renderSidebar(); openRecipe(id);
+}
+
+// ══ INGREDIENTS MANAGEMENT ════════════════════════════════════════════════════
+function showIngredients(){
+  curId=null; renderSidebar();
+  document.getElementById('topbar-title').textContent='Ingredients';
+  document.getElementById('topbar-actions').innerHTML=`<button class="btn btn-ocean" onclick="addIngredient()">+ Add</button>`;
+
+  const rows=S.ing.map((ing,idx)=>`
+    <tr>
+      <td><input value="${esc(ing.name)}" onchange="updIngredient(${idx},'name',this.value)"/></td>
+      <td><input value="${esc(ing.unit)}" onchange="updIngredient(${idx},'unit',this.value)"/></td>
+      <td><input type="number" value="${ing.cost}" step="0.01" onchange="updIngredient(${idx},'cost',+this.value)"/></td>
+      <td><input value="${esc(ing.allergen)}" onchange="updIngredient(${idx},'allergen',this.value)"/></td>
+      <td><input value="${esc(ing.dietary)}" onchange="updIngredient(${idx},'dietary',this.value)"/></td>
+      <td><button class="btn-rm" onclick="removeIngredient(${idx})">×</button></td>
+    </tr>`).join('');
+
+  document.getElementById('content').innerHTML=`
+    <div class="card">
+      <div class="ch"><h3>All Ingredients (${S.ing.length})</h3></div>
       <div style="overflow-x:auto">
-        <table>
-          <thead><tr><th>Name</th><th>Unit</th><th>Cost/Unit ($)</th><th>Allergen</th><th>Dietary</th><th></th></tr></thead>
+        <table class="mgmt-table">
+          <thead><tr><th>Name</th><th>Unit</th><th>$/Unit</th><th>Allergen</th><th>Dietary</th><th></th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
       </div>
     </div>`;
 }
 
-function updateIng(idx, field, value) {
-  state.ingredients[idx][field] = value;
-  saveData();
+function updIngredient(idx,field,value){S.ing[idx][field]=value; save();}
+function removeIngredient(idx){if(!confirm('Remove?')) return; S.ing.splice(idx,1); save(); showIngredients();}
+function addIngredient(){S.ing.push({name:'New Ingredient',unit:'kg',cost:0,allergen:'',dietary:'',type:'Ingredient'}); save(); showIngredients(); setTimeout(()=>document.getElementById('content').scrollTop=99999,50);}
+
+// ══ UTILS ════════════════════════════════════════════════════════════════════
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function allergenClass(a){
+  const m={'fish':'fish','dairy':'dairy','egg':'egg','gluten':'gluten','wheat':'gluten','crustacean':'crustacean','mollusc':'mollusc','soy':'soy','sesame':'sesame'};
+  return m[a.toLowerCase().trim()]||'';
 }
 
-function removeIng(idx) {
-  if (!confirm('Remove this ingredient?')) return;
-  state.ingredients.splice(idx, 1);
-  saveData();
-  showIngredients();
-}
-
-function addNewIngredient() {
-  state.ingredients.push({ name: 'New Ingredient', unit: 'kg', cost: 0, allergen: '', dietary: '', type: 'Ingredient' });
-  saveData();
-  showIngredients();
-  // scroll to bottom
-  setTimeout(() => { document.getElementById('content').scrollTop = 99999; }, 50);
-}
-
-// ── INIT ──────────────────────────────────────────────────────────────────────
+// ══ INIT ══════════════════════════════════════════════════════════════════════
 renderSidebar();
 </script>
 </body>
